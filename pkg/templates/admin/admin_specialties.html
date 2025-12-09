@@ -1,0 +1,146 @@
+{% extends 'admin/admin_dashboardlayout.html' %}
+
+{% block title %}Specialties - Admin{% endblock %}
+
+{% block content %}
+<main class="container-fluid">
+    <div class="row">
+        <div class="col-lg-2 d-none d-lg-block"></div>
+        <div class="col-lg-10 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">Specialties</h2>
+                    <p class="text-muted mb-0">Manage medical specialties</p>
+                </div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSpecialtyModal">
+                    <i class="fas fa-plus me-2"></i>Add Specialty
+                </button>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    {% if specialties %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="px-4">ID</th>
+                                    <th>Specialty Name</th>
+                                    <th>Doctors Count</th>
+                                    <th class="text-end px-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for spec in specialties %}
+                                <tr>
+                                    <td class="px-4">#{{ spec.specialty_id }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-stethoscope text-primary me-2"></i>
+                                            <strong>{{ spec.specialty_name }}</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ spec.doctor|length }} doctor(s)</span>
+                                    </td>
+                                    <td class="text-end px-4">
+                                        <a href="{{ url_for('admin_edit_specialty', spec_id=spec.specialty_id) }}"
+                                            class="btn btn-sm btn-outline-primary me-2">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal{{ spec.specialty_id }}">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <div class="modal fade" id="deleteModal{{ spec.specialty_id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Delete Specialty</h5>
+                                                <button type="button" class="btn-close"
+                                                    data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Are you sure you want to delete <strong>{{ spec.specialty_name
+                                                        }}</strong>?</p>
+                                                {% if spec.doctor|length > 0 %}
+                                                <div class="alert alert-warning">
+                                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                                    This specialty has {{ spec.doctor|length }} doctor(s) assigned. You
+                                                    cannot delete it.
+                                                </div>
+                                                {% else %}
+                                                <p class="text-muted">This action cannot be undone.</p>
+                                                {% endif %}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                {% if spec.doctor|length == 0 %}
+                                                <form method="POST"
+                                                    action="{{ url_for('admin_delete_specialty', spec_id=spec.specialty_id) }}"
+                                                    class="d-inline">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-stethoscope fs-1 text-muted mb-3"></i>
+                        <p class="text-muted">No specialties found. Add your first specialty to get started.</p>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSpecialtyModal">
+                            <i class="fas fa-plus me-2"></i>Add Specialty
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div class="modal fade" id="addSpecialtyModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('admin_specialties') }}">
+                {{ form.hidden_tag() }}
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Specialty</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        {{ form.specialty_name.label(class='form-label') }}
+                        {{ form.specialty_name(class='form-control', placeholder='Enter one or multiple names (comma or
+                        new line separated)') }}
+                        <div class="form-text">Tip: You can paste multiple specialty names separated by commas or put
+                            one per line.</div>
+                        {% if form.specialty_name.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.specialty_name.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    {{ form.submit(class='btn btn-primary') }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends "doctors/dashboard_layout.html" %}
+{% block content %}
+
+<main class="container-fluid">
+    <div class="row">
+
+        <div class="col-lg-2 d-none d-lg-block"></div>
+
+        <div class="col-lg-10 p-4">
+
+            <h3 class="fw-bold mb-4">My Appointments</h3>
+
+            <div class="row g-4">
+
+                {% if appointments %}
+
+                {% for appt in appointments %}
+                <div class="col-12">
+                    <div class="card shadow-sm border-0 rounded-4">
+
+                        <!-- Header -->
+                        <div class="card-header bg-white d-flex align-items-center border-0 pb-0">
+                            <strong class="text-muted small">Appointment</strong>
+
+                            <span class="badge ms-auto 
+                                {% if appt.status == 'pending' %} bg-warning text-dark 
+                                {% elif appt.status == 'declined' %} bg-danger 
+                                {% elif appt.status == 'accepted' %} bg-success 
+                                {% elif appt.status == 'completed' %} bg-primary 
+                                {% elif appt.status == 'cancelled' %} bg-danger
+                                {% endif %}
+                            ">
+                                {{ appt.status|capitalize }}
+                            </span>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="card-body">
+
+                            <div class="d-flex">
+
+                                <!-- Patient Image -->
+                                <img src="/static/uploads/patients/{{ appt.patient.patient_profilepic or 'default_patient.png' }}"
+                                    class="rounded-circle" width="60" height="60" style="object-fit:cover;">
+
+                                <!-- Info -->
+                                <div class="ms-3">
+
+                                    <h6 class="fw-bold mb-1">
+                                        {{ appt.patient.patient_fname }} {{ appt.patient.patient_lname }}
+                                    </h6>
+
+                                    <small class="text-muted d-block">
+                                        {{ appt.patient.patient_email }}
+                                    </small>
+
+                                    <small class="text-secondary d-block mt-1">
+                                        {{ appt.appointment_date }} — {{ appt.appointment_time }}
+                                    </small>
+
+                                    {% if appt.patient_note %}
+                                    <small class="d-block mt-2 text-muted">
+                                        <strong>Patient Note:</strong> {{ appt.patient_note }}
+                                    </small>
+                                    {% endif %}
+                                    {% if appt.status == 'cancelled' %}
+                                    <small class="d-block mt-2 text-danger">
+                                        <strong>❌ Appointment cancelled by Patient</strong>
+                                    </small>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- ACTION BUTTONS -->
+                            <div class="d-flex gap-2">
+
+                                {% if appt.status == "pending" %}
+                                <a href="{{ url_for('accept_appointment', id=appt.app_id) }}"
+                                    class="btn btn-outline-success btn-sm">Accept</a>
+
+                                <a href="{{ url_for('decline_appointment', id=appt.app_id) }}"
+                                    class="btn btn-outline-danger btn-sm">Decline</a>
+
+                                {% elif appt.status == "accepted" %}
+                                <a href="{{ url_for('start_consultation', id=appt.app_id) }}"
+                                    class="btn btn-outline-success btn-sm">Start Consultation</a>
+
+                                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#noteModal{{ appt.app_id }}">
+                                    Send Note
+                                </button>
+
+                                {% elif appt.status == "completed" %}
+                                <a href="{{ url_for('doctor_view_consultation', id=appt.app_id) }}"
+                                    class="btn btn-outline-success btn-sm">
+                                    View Consultation
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DOCTOR NOTE MODAL (INSIDE LOOP!) -->
+                <div class="modal fade" id="noteModal{{ appt.app_id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <form action="{{ url_for('add_doctor_note', id=appt.app_id) }}" method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Send Note to Patient</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <textarea name="doctor_note" class="form-control" rows="4"
+                                        placeholder="Type your message..."></textarea>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button class="btn btn-primary">Send</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+
+                {% else %}
+
+                <!-- No appointments -->
+                <div class="col-12">
+                    <div class="card shadow-sm border-0 text-center p-5">
+                        <h5 class="fw-semibold">No Appointments Yet</h5>
+                        <p class="text-muted">You have no upcoming appointments.</p>
+                    </div>
+                </div>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

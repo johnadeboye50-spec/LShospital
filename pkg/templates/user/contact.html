@@ -1,0 +1,306 @@
+{% extends "user/user_layout.html"%}
+
+{%block banner %}
+<section class="py-5 bg-primary bg-gradient text-white">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+            <div>
+                <h1 class="h2 fw-bold mb-1">Contact Us</h1>
+                <p class="mb-0 opacity-75">Get in touch with the developer</p>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 bg-transparent p-0">
+                    <li class="breadcrumb-item"><a href="{{ url_for('home') }}" class="text-white opacity-75">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Contact</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</section>
+{% endblock banner %}
+
+{%block content%}
+<!-- Demo Notice -->
+<section class="py-4 bg-light border-bottom">
+    <div class="container">
+        <div class="alert alert-info mb-0 d-flex align-items-center">
+            <i class="fas fa-info-circle fa-2x me-3"></i>
+            <div>
+                <h5 class="fw-bold mb-1">Demo Project Notice</h5>
+                <p class="mb-0">This is a portfolio demonstration project. The contact information below belongs to the
+                    developer, not an actual hospital. For inquiries about this project, feel free to reach out!</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Information -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Contact Details -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-5">
+                        <h3 class="fw-bold mb-4">Developer Contact</h3>
+                        <p class="text-muted mb-4">Have questions about this project or want to discuss potential
+                            opportunities? Feel free to reach out using the details below.</p>
+
+                        <div class="mb-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="bg-primary bg-gradient text-white rounded-circle p-3 me-3">
+                                    <i class="fas fa-phone fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Phone Number</h6>
+                                    <p class="text-muted mb-0">09131296610</p>
+                                    <small class="text-muted">Available Mon-Fri, 9AM-6PM</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="bg-success bg-gradient text-white rounded-circle p-3 me-3">
+                                    <i class="fas fa-envelope fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Email Address</h6>
+                                    <p class="text-muted mb-0">johnadeboye50@gmail.com</p>
+                                    <small class="text-muted">I'll respond within 24 hours</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="d-flex align-items-start">
+                                <div class="bg-info bg-gradient text-white rounded-circle p-3 me-3">
+                                    <i class="fas fa-code fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Project Type</h6>
+                                    <p class="text-muted mb-0">Hospital Management System</p>
+                                    <small class="text-muted">Full-stack web application demo</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="alert alert-warning mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Important:</strong> This is a demonstration project. Not affiliated with any real
+                            medical facility.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-5">
+                        <h3 class="fw-bold mb-4">Send a Message</h3>
+                        <p class="text-muted mb-4">Interested in this project or have questions? Fill out the form below
+                            and I'll get back to you as soon as possible.</p>
+
+                        <form>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Your Name</label>
+                                    <input type="text" class="form-control" placeholder="Enter your name" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Your Email</label>
+                                    <input type="email" class="form-control" placeholder="your.email@example.com"
+                                        required>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Subject</label>
+                                    <input type="text" class="form-control" placeholder="What is this about?" required>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Message</label>
+                                    <textarea class="form-control" rows="6" placeholder="Type your message here..."
+                                        required></textarea>
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                                        <i class="fas fa-paper-plane me-2"></i>Send Message
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="alert alert-info mt-4 mb-0">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            <strong>Note:</strong> You can also reach me directly via email at
+                            <strong>johnadeboye50@gmail.com</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Links Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h3 class="fw-bold mb-3">Explore the Demo Project</h3>
+            <p class="text-muted">Check out other features of this hospital management system</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-user-md fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold mb-2">Our Doctors</h5>
+                        <p class="text-muted small mb-3">Browse available doctors and their specialties</p>
+                        <a href="{{ url_for('doctors_page') }}" class="btn btn-outline-primary btn-sm">View Doctors</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-hospital fa-3x text-success mb-3"></i>
+                        <h5 class="fw-bold mb-2">Services</h5>
+                        <p class="text-muted small mb-3">Explore our comprehensive medical services</p>
+                        <a href="{{ url_for('services') }}" class="btn btn-outline-success btn-sm">View Services</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-info-circle fa-3x text-info mb-3"></i>
+                        <h5 class="fw-bold mb-2">About</h5>
+                        <p class="text-muted small mb-3">Learn more about this demo project</p>
+                        <a href="{{ url_for('about') }}" class="btn btn-outline-info btn-sm">About Us</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-calendar-check fa-3x text-warning mb-3"></i>
+                        <h5 class="fw-bold mb-2">Demo Login</h5>
+                        <p class="text-muted small mb-3">Try the patient or doctor portal</p>
+                        <a href="{{ url_for('login_page') }}" class="btn btn-outline-warning btn-sm">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h3 class="fw-bold mb-3">Frequently Asked Questions</h3>
+            <p class="text-muted">Common questions about this demo project</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item border-0 shadow-sm mb-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#faq1">
+                                Is this a real hospital website?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                No, this is a portfolio demonstration project showcasing a hospital management system.
+                                It's designed to demonstrate full-stack web development skills and is not affiliated
+                                with any actual medical facility.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm mb-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#faq2">
+                                What technologies were used?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                This project is built using Flask (Python), Bootstrap 5, SQLAlchemy, and includes
+                                features like user authentication, appointment booking, patient/doctor dashboards, and
+                                more.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm mb-3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#faq3">
+                                Can I use this code for my project?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Please contact me via email at johnadeboye50@gmail.com to discuss any usage or licensing
+                                questions. I'm happy to help with similar projects or collaborations.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#faq4">
+                                How can I contact you?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                You can reach me via email at <strong>johnadeboye50@gmail.com</strong> or call/text
+                                <strong>09131296610</strong>. I'm available Monday through Friday, 9 AM to 6 PM.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary bg-gradient text-white">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-3">Ready to Connect?</h2>
+        <p class="lead mb-4">Whether you have questions about this project or want to discuss collaboration
+            opportunities, I'm here to help!</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="mailto:johnadeboye50@gmail.com" class="btn btn-light btn-lg">
+                <i class="fas fa-envelope me-2"></i>Email Me
+            </a>
+            <a href="tel:09131296610" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-phone me-2"></i>Call Me
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+
+{%block why %}
+<!-- Optional additional content -->
+{%endblock why %}

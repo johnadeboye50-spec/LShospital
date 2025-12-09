@@ -1,0 +1,66 @@
+/* Dashboard Layout Styles */
+.navbar-custom {
+    background: rgba(255, 255, 255, 0.98) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.sidebar-custom {
+    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+    border-right: 2px solid #e9ecef;
+}
+
+.sidebar-custom .list-group-item {
+    border: none;
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.sidebar-custom .list-group-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+    border-left-color: #667eea;
+    /* Prevent layout shift on hover */
+    transform: none;
+}
+
+.sidebar-custom .list-group-item.active {
+    background: rgba(102, 126, 234, 0.15);
+    border-left-color: #667eea;
+    color: #667eea;
+    font-weight: 600;
+}
+
+.profile-badge {
+    transition: transform 0.3s ease;
+}
+
+.profile-badge:hover {
+    transform: scale(1.05);
+}
+
+.notification-badge {
+    position: relative;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.notification-badge:hover {
+    color: #667eea;
+}
+
+/* Doctor Card Styles */
+.doctor-card {
+    border-radius: 16px;
+    transition: 0.2s;
+}
+
+.doctor-card:hover {
+    background: #eef7ff;
+    cursor: pointer;
+    transform: scale(1.02);
+}

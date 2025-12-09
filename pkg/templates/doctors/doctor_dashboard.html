@@ -1,0 +1,329 @@
+{% extends "doctors/dashboard_layout.html" %}
+{% block content %}
+
+<main class="container-fluid">
+    <div class="row">
+
+        <!-- Desktop sidebar placeholder -->
+        <div class="col-lg-2 d-none d-lg-block"></div>
+
+        <div class="col-lg-10 p-4">
+
+            <!-- Stats Cards Row -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <small class="text-muted d-block">Today's Appointments</small>
+                                    <h3 class="fw-bold mb-0">{{ todays_appointments|length }}</h3>
+                                </div>
+                                <div class="bg-primary bg-gradient text-white rounded-circle p-3">
+                                    <i class="fas fa-calendar-day fa-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <small class="text-muted d-block">Total Patients</small>
+                                    <h3 class="fw-bold mb-0">{{ total_patients }}</h3>
+                                </div>
+                                <div class="bg-success bg-gradient text-white rounded-circle p-3">
+                                    <i class="fas fa-users fa-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <small class="text-muted d-block">Pending Requests</small>
+                                    <h3 class="fw-bold mb-0">{{ pending_appointments }}</h3>
+                                </div>
+                                <div class="bg-warning bg-gradient text-white rounded-circle p-3">
+                                    <i class="fas fa-clock fa-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <small class="text-muted d-block">Consultations</small>
+                                    <h3 class="fw-bold mb-0">{{ completed_consultations }}</h3>
+                                </div>
+                                <div class="bg-info bg-gradient text-white rounded-circle p-3">
+                                    <i class="fas fa-notes-medical fa-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Row -->
+            <div class="row g-4">
+
+                <!-- Today's Appointments -->
+                <div class="col-12 col-lg-8">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-white border-0 d-flex align-items-center py-3">
+                            <h6 class="fw-semibold mb-0">Today's Appointments</h6>
+                            <i class="fas fa-calendar-check ms-auto text-primary"></i>
+                        </div>
+
+                        <div class="card-body p-3">
+                            {% if todays_appointments and todays_appointments|length > 0 %}
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Patient</th>
+                                            <th>Contact</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for appt in todays_appointments %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ appt.appointment_time.strftime('%I:%M %p') if
+                                                    appt.appointment_time else '-' }}</strong>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="/static/uploads/patients/{{ appt.patient.patient_profilepic or 'default_patient.png' }}"
+                                                        class="rounded-circle me-2" width="32" height="32"
+                                                        style="object-fit:cover;">
+                                                    <div>
+                                                        <div class="fw-semibold small">{{ appt.patient.patient_fname }}
+                                                            {{ appt.patient.patient_lname }}</div>
+                                                        <small class="text-muted">ID: #{{ appt.patient.patient_id
+                                                            }}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><small>{{ appt.patient.phone_num }}</small></td>
+                                            <td>
+                                                <span class="badge
+                                                    {% if appt.status == 'pending' %} bg-warning text-dark
+                                                    {% elif appt.status == 'accepted' %} bg-success
+                                                    {% elif appt.status == 'declined' %} bg-danger
+                                                    {% elif appt.status == 'completed' %} bg-primary
+                                                    {% else %} bg-secondary {% endif %}">
+                                                    {{ appt.status|capitalize }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('doctor_appointments') }}"
+                                                    class="btn btn-sm btn-outline-primary">View</a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-calendar-day fa-3x text-primary mb-3"></i>
+                                <p class="mb-1 fw-semibold">No appointments scheduled for today.</p>
+                                <p class="small">Enjoy your day or check upcoming appointments.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="col-12 col-lg-4">
+                    <div class="card shadow-sm border-0 rounded-4 h-100">
+                        <div class="card-header bg-white border-0 d-flex align-items-center py-3">
+                            <h6 class="fw-semibold mb-0">Recent Activity</h6>
+                            <i class="fas fa-history ms-auto text-primary"></i>
+                        </div>
+
+                        <div class="card-body p-3">
+                            {% if activities and activities|length > 0 %}
+                            {% for act in activities %}
+                            <div
+                                class="d-flex align-items-start {% if not loop.last %}pb-3 mb-3 border-bottom{% endif %}">
+                                {% if act.icon == 'patient' %}
+                                <img src="/static/uploads/patients/{{ act.pic or 'default_patient.png' }}"
+                                    class="rounded-circle me-2" width="35" height="35" style="object-fit:cover;">
+                                {% else %}
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-2"
+                                    style="width:35px;height:35px;flex-shrink:0;">
+                                    <span class="fw-bold small text-primary">{{ act.icon|upper }}</span>
+                                </div>
+                                {% endif %}
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <strong class="small">{{ act.title }}</strong>
+                                        <small class="text-muted ms-2">{{ act.date.strftime('%b %d') if act.date else ''
+                                            }}</small>
+                                    </div>
+                                    <div class="small text-muted">{{ act.description }}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-history fa-2x text-primary mb-2"></i>
+                                <p class="mb-1">No recent activity.</p>
+                                <p class="small">Your appointments and consultations will appear here.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Overview -->
+                <div class="col-12 col-lg-6">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-white border-0 d-flex align-items-center py-3">
+                            <h6 class="fw-semibold mb-0">Quick Stats</h6>
+                            <i class="fas fa-chart-pie ms-auto text-primary"></i>
+                        </div>
+
+                        <div class="card-body p-3">
+                            <!-- Today's Progress -->
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted">Today's Progress</small>
+                                    <small class="fw-semibold">{{ todays_completed }} / {{ todays_total }}</small>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-success" role="progressbar"
+                                        style="width: {% if todays_total > 0 %}{{ (todays_completed / todays_total * 100)|round }}{% else %}0{% endif %}%">
+                                    </div>
+                                </div>
+                                <small class="text-muted">Completed appointments today</small>
+                            </div>
+
+                            <!-- Appointment Breakdown -->
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="card bg-light border-0">
+                                        <div class="card-body p-3 text-center">
+                                            <div class="d-flex align-items-center justify-content-center mb-2">
+                                                <i class="fas fa-check-circle text-success me-2"></i>
+                                                <h4 class="fw-bold mb-0">{{ accepted_appointments }}</h4>
+                                            </div>
+                                            <small class="text-muted">Accepted</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="card bg-light border-0">
+                                        <div class="card-body p-3 text-center">
+                                            <div class="d-flex align-items-center justify-content-center mb-2">
+                                                <i class="fas fa-check-double text-primary me-2"></i>
+                                                <h4 class="fw-bold mb-0">{{ completed_appointments }}</h4>
+                                            </div>
+                                            <small class="text-muted">Completed</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="card bg-light border-0">
+                                        <div class="card-body p-3 text-center">
+                                            <div class="d-flex align-items-center justify-content-center mb-2">
+                                                <i class="fas fa-clock text-warning me-2"></i>
+                                                <h4 class="fw-bold mb-0">{{ pending_appointments }}</h4>
+                                            </div>
+                                            <small class="text-muted">Pending</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="card bg-light border-0">
+                                        <div class="card-body p-3 text-center">
+                                            <div class="d-flex align-items-center justify-content-center mb-2">
+                                                <i class="fas fa-notes-medical text-info me-2"></i>
+                                                <h4 class="fw-bold mb-0">{{ completed_consultations }}</h4>
+                                            </div>
+                                            <small class="text-muted">Consultations</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <a href="{{ url_for('doctor_appointments') }}"
+                                    class="btn btn-sm btn-outline-primary w-100">
+                                    <i class="fas fa-calendar-alt me-1"></i>View All Appointments
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Patients -->
+                <div class="col-12 col-lg-6">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-white border-0 d-flex align-items-center py-3">
+                            <h6 class="fw-semibold mb-0">Recent Patients</h6>
+                            <i class="fas fa-user-injured ms-auto text-primary"></i>
+                        </div>
+
+                        <div class="card-body p-3">
+                            {% if recent_patients and recent_patients|length > 0 %}
+                            {% for patient in recent_patients %}
+                            <div
+                                class="d-flex align-items-center {% if not loop.last %}pb-3 mb-3 border-bottom{% endif %}">
+                                <img src="/static/uploads/patients/{{ patient.patient_profilepic or 'default_patient.png' }}"
+                                    class="rounded-circle me-3" width="45" height="45" style="object-fit:cover;">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0 fw-semibold small">{{ patient.patient_fname }} {{
+                                        patient.patient_lname }}</h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-phone me-1"></i>{{ patient.phone_num }}
+                                    </small>
+                                </div>
+                                <a href="{{ url_for('doctor_patients') }}"
+                                    class="btn btn-sm btn-outline-primary">View</a>
+                            </div>
+                            {% endfor %}
+                            <div class="mt-3">
+                                <a href="{{ url_for('doctor_patients') }}"
+                                    class="btn btn-sm btn-outline-primary w-100">View All Patients</a>
+                            </div>
+                            {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-user-injured fa-2x text-primary mb-2"></i>
+                                <p class="mb-1">No patients yet.</p>
+                                <p class="small">Patients you've consulted will appear here.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- row g-4 -->
+
+        </div><!-- col-lg-10 -->
+
+    </div>
+</main>
+
+{% endblock %}

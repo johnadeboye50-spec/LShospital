@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: lshospital-app
+    env: python
+    plan: free
+    runtime: python-3.11
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn starter:app
+    envVars:
+      - key: RENDER
+        value: "1"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromService:
+          name: lshospital-db
+          property: connectionString
+
+  - type: pserv
+    name: lshospital-db
+    env: postgres
+    plan: free
+    ipAllowList: []

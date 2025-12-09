@@ -1,0 +1,165 @@
+{% extends "user/dashboard_layout.html" %}
+{% block content %}
+
+<main class="container-fluid">
+    <div class="row">
+
+        <div class="col-lg-2 d-none d-lg-block"></div>
+
+        <div class="col-lg-10 p-4">
+
+            <h3 class="fw-bold mb-4">My Appointments</h3>
+
+            <div class="row g-4">
+
+                {% if appointments %}
+
+                {% for app in appointments %}
+                <div class="col-12">
+                    <div class="card shadow-sm border-0 rounded-4">
+
+                        <!-- Header -->
+                        <div class="card-header bg-white d-flex align-items-center border-0 pb-0">
+                            <strong class="text-muted small">Appointment</strong>
+
+                            <!-- STATUS BADGE -->
+                            <span class="badge ms-auto 
+                                {% if app.status == 'pending' %}
+                                    bg-warning text-dark
+                                {% elif app.status == 'cancelled' %}
+                                    bg-danger
+                                {% elif app.status == 'accepted' %}
+                                    bg-success
+                                {% elif app.status == 'declined' %}
+                                    bg-danger
+                                {% elif app.status == 'completed' %}
+                                    bg-primary
+                                {% endif %}
+                            
+                            ">
+                                {{ app.status|capitalize }}
+                            </span>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="card-body">
+
+                            <div class="d-flex">
+
+                                <!-- Doctor Image -->
+                                <img src="/static/uploads/doctors/{{ app.doctor.doctor_profilepic or 'default_doc.png' }}"
+                                    class="rounded-circle" width="60" height="60" style="object-fit:cover;">
+
+                                <!-- Info -->
+                                <div class="ms-3">
+
+                                    <h6 class="fw-bold mb-1">
+                                        Dr. {{ app.doctor.doctor_fname }} {{ app.doctor.doctor_lname }}
+                                    </h6>
+
+                                    <small class="text-muted d-block">
+                                        {{ app.doctor.specialty.specialty_name }}
+                                    </small>
+
+                                    <small class="text-secondary d-block mt-1">
+                                        {{ app.appointment_date }}
+                                        — {{ app.appointment_time }}
+                                    </small>
+
+                                    {% if app.status == 'pending' %}
+                                    <small class="d-block mt-2 text-warning">
+                                        <strong>⏳ Waiting for doctor approval</strong>
+                                    </small>
+                                    {% elif app.status == 'accepted' %}
+                                    {% if app.doctor_note %}
+                                    <small class="d-block mt-2 text-success">
+                                        <strong class="text-dark">Doctor's Note:</strong> {{
+                                        app.doctor_note }}
+                                    </small>
+                                    {% endif %}
+                                    {% elif app.status == 'completed' %}
+                                    {% if app.doctor_note %}
+                                    <small class="d-block mt-2 text-success">
+                                        <strong class="text-dark">Doctor's Note:</strong> {{ app.doctor_note }}
+                                    </small>
+                                    {% endif %}
+                                    {% elif app.status == 'declined' %}
+                                    <small class="d-block mt-2 text-danger">
+                                        <strong>❌ Appointment declined by doctor</strong>
+                                    </small>
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                            <hr>
+
+                            <!-- ACTION BUTTONS -->
+                            <div class="d-flex gap-2">
+
+                                <!-- ACTION BUTTONS -->
+                                <div class="d-flex gap-2">
+
+                                    {% if app.status == "pending" %}
+                                    <a href="{{ url_for('cancel_appointment', id=app.app_id) }}"
+                                        class="btn btn-outline-danger btn-sm">
+                                        Cancel
+                                    </a>
+
+                                    <a href="{{ url_for('reschedule_appointment', id=app.app_id) }}"
+                                        class="btn btn-outline-secondary btn-sm">
+                                        Reschedule
+                                    </a>
+                                    {% elif app.status == "cancelled" %}
+                                    <a href="{{ url_for('book_appointment') }}" class="btn btn-outline-success btn-sm">
+                                        Book New Appointment
+                                    </a>
+                                    {% elif app.status == "accepted" %}
+                                    <a href="{{ url_for('cancel_appointment', id=app.app_id) }}"
+                                        class="btn btn-outline-danger btn-sm">
+                                        Cancel
+                                    </a>
+
+                                    <a href="{{ url_for('patient_view_consultation', id=app.app_id) }}"
+                                        class="btn btn-outline-primary btn-sm disabled">Wait For Consultation.....</a>
+
+
+                                    {% elif app.status == "completed" %}
+                                    <a href="{{ url_for('patient_view_consultation', id=app.app_id) }}"
+                                        class="btn btn-outline-primary btn-sm ">View Consultation</a>
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% else %}
+
+                <!-- No appointments -->
+                <div class="col-12">
+                    <div class="card shadow-sm border-0 text-center p-5">
+                        <h5 class="fw-semibold">No Appointments Yet</h5>
+                        <p class="text-muted">You haven't booked any appointment.</p>
+                        <a href="{{ url_for('book_appointment') }}" class="btn btn-primary">
+                            Book an Appointment
+                        </a>
+                    </div>
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+{% endblock %}

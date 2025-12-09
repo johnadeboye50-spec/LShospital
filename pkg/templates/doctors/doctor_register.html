@@ -1,0 +1,188 @@
+{% extends "user/user_layout.html"%}
+
+{% block banner %}
+<section class="py-5 bg-primary bg-gradient text-white">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+            <div>
+                <h1 class="h2 fw-bold mb-1">Doctor Registration</h1>
+                <p class="mb-0 opacity-75">Join the Life Spring medical team</p>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 bg-transparent p-0">
+                    <li class="breadcrumb-item">
+                        <a href="{{ url_for('home') }}" class="text-white opacity-75">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Doctor Register</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</section>
+{% endblock banner %}
+
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="row justify-content-center mb-3">
+            <div class="col-lg-7 col-md-9">
+                {% for category, message in messages %}
+                <div class="alert alert-{% if category == 'error' %}danger{% elif category == 'success' %}success{% elif category == 'warning' %}warning{% elif category == 'info' %}info{% else %}primary{% endif %} alert-dismissible fade show"
+                    role="alert">
+                    <i
+                        class="fas fa-{% if category == 'error' %}exclamation-circle{% elif category == 'success' %}check-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-7 col-md-9">
+                <div class="card shadow-sm border-0 p-4">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-md fa-4x text-primary mb-3"></i>
+                        <h4 class="fw-bold">Register as a Doctor</h4>
+                        <p class="text-muted small">Fill in your professional information to create your account</p>
+                    </div>
+
+                    <form method="POST" action="" enctype="multipart/form-data">
+                        {{ form.csrf_token }}
+
+                        <!-- Full Name -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ form.firstname.label }}</label>
+                                {{ form.firstname(class_="form-control") }}
+                                {% for error in form.firstname.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">{{ form.lastname.label }}</label>
+                                {{ form.lastname(class_="form-control") }}
+                                {% for error in form.lastname.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mt-3">
+                            <label class="form-label">{{ form.email.label }}</label>
+                            {{ form.email(class_="form-control") }}
+                            {% for error in form.email.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="mt-3">
+                            <label class="form-label">{{ form.phone.label }}</label>
+                            {{ form.phone(class_="form-control") }}
+                            {% for error in form.phone.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Specialization -->
+                        <div class="mt-3">
+                            <label class="form-label">{{ form.specialization.label }}</label>
+                            {{ form.specialization(class_="form-select") }}
+                            {% for error in form.specialization.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- License Number -->
+                        <div class="mt-3">
+                            <label class="form-label">{{ form.license_no.label }}</label>
+                            {{ form.license_no(class_="form-control") }}
+                            {% for error in form.license_no.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Years of Experience -->
+                        <div class="mt-3">
+                            <label class="form-label">{{ form.experience.label }}</label>
+                            {{ form.experience(class_="form-control") }}
+                            {% for error in form.experience.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Bio -->
+                        <div class="mt-3">
+                            <label class="form-label">{{ form.bio.label }}</label>
+                            {{ form.bio(class_="form-control", rows="3") }}
+                            {% for error in form.bio.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <!-- Gender -->
+                        <div class="mt-3">
+                            <label class="form-label">{{ form.doctor_gender.label }}</label>
+                            {{ form.doctor_gender(class_="form-select") }}
+                            {% for error in form.doctor_gender.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Profile Photo -->
+                        <div class="mt-3">
+                            <label class="form-label">{{ form.profile_pic.label }}</label>
+                            {{ form.profile_pic(class_="form-control") }}
+                            {% for error in form.profile_pic.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Password -->
+                        <div class="row g-3 mt-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{{ form.password.label }}</label>
+                                {{ form.password(class_="form-control") }}
+                                {% for error in form.password.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ form.confirm_password.label }}</label>
+                                {{ form.confirm_password(class_="form-control") }}
+                                {% for error in form.confirm_password.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="d-grid mt-4">
+                            {{ form.submit(class_="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+
+                <div class="text-center mt-4">
+                    <small class="text-muted">
+                        Already have an account?
+                        <a href="{{ url_for('doctor_login') }}" class="fw-bold text-primary text-decoration-none">Login
+                            here</a>
+                    </small>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock content %}

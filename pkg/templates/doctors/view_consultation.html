@@ -1,0 +1,314 @@
+{% extends "doctors/dashboard_layout.html" %}
+{% block content %}
+
+<main class="container-fluid">
+    <div class="row">
+
+        <div class="col-lg-2 d-none d-lg-block"></div>
+
+        <div class="col-lg-10 p-4">
+
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold mb-1">
+                        <i class="fas fa-file-medical-alt me-2 text-primary"></i>Consultation Record
+                    </h3>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-clock me-2"></i>
+                        {{ consultation.date.strftime("%B %d, %Y at %I:%M %p") }}
+                    </p>
+                </div>
+                <div>
+                    <button type="button" onclick="window.print()" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-print me-2"></i>Print
+                    </button>
+                    <a href="{{ url_for('doctor_appointments') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back
+                    </a>
+                </div>
+            </div>
+
+            <!-- Patient Information Card -->
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-user-injured me-2 text-primary"></i>Patient Information
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <img src="/static/uploads/patients/{{ consultation.appointment.patient.patient_profilepic or 'default_patient.png' }}"
+                                    alt="Patient Profile Picture" class="rounded-circle border border-3 border-primary"
+                                    width="80" height="80" style="object-fit:cover;">
+                                <div class="ms-3">
+                                    <h5 class="fw-bold mb-1">
+                                        {{ consultation.appointment.patient.patient_fname }}
+                                        {{ consultation.appointment.patient.patient_lname }}
+                                    </h5>
+                                    {% if consultation.appointment.patient.patient_dob %}
+                                    <p class="text-muted mb-1">
+                                        <i class="fas fa-birthday-cake me-2"></i>
+                                        {{ consultation.appointment.patient.patient_dob.strftime("%b %d, %Y") }}
+                                        <span class="badge bg-light text-dark ms-2">
+                                            {{ ((consultation.date.date() -
+                                            consultation.appointment.patient.patient_dob).days / 365.25) | int }} yrs
+                                        </span>
+                                    </p>
+                                    {% endif %}
+                                    {% if consultation.appointment.patient.patient_gender %}
+                                    <small class="text-muted">
+                                        <i class="fas fa-venus-mars me-2"></i>
+                                        {{ consultation.appointment.patient.patient_gender.capitalize() }}
+                                    </small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-3 mt-md-0">
+                            <div class="bg-light rounded-3 p-3">
+                                <h6 class="fw-bold mb-3 text-dark">
+                                    <i class="fas fa-calendar-check me-2 text-primary"></i>Appointment Details
+                                </h6>
+                                <div class="row">
+                                    <div class="col-6 mb-2">
+                                        <small class="text-muted d-block">Date</small>
+                                        <strong>{{ consultation.appointment.appointment_date.strftime("%b %d, %Y")
+                                            }}</strong>
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <small class="text-muted d-block">Time</small>
+                                        <strong>{{ consultation.appointment.appointment_time.strftime("%I:%M %p")
+                                            }}</strong>
+                                    </div>
+                                    {% if consultation.appointment.patient.phone_num %}
+                                    <div class="col-12 mt-2">
+                                        <small class="text-muted d-block">Contact</small>
+                                        <strong><i class="fas fa-phone me-1"></i>{{
+                                            consultation.appointment.patient.phone_num }}</strong>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chief Complaint / Patient Note -->
+            {% if consultation.appointment.patient_note %}
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-header bg-light border-bottom py-3">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-comment-medical me-2 text-info"></i>Chief Complaint
+                    </h6>
+                </div>
+                <div class="card-body p-4">
+                    <p class="mb-0 patient-note">{{ consultation.appointment.patient_note }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Clinical Assessment Section -->
+            <div class="row">
+                <!-- Diagnosis -->
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-primary text-white rounded-top-4 py-3">
+                            <h5 class="mb-0">
+                                <i class="fas fa-diagnoses me-2"></i>Clinical Diagnosis
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="mb-0 clinical-diagnosis">{{ consultation.diagnose }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Treatment Plan -->
+                {% if consultation.treatment %}
+                <div class="col-md-12 mb-4">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-success text-white rounded-top-4 py-3">
+                            <h5 class="mb-0">
+                                <i class="fas fa-medkit me-2"></i>Treatment Plan
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="mb-0 treatment-plan">{{ consultation.treatment }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Prescribed Medications -->
+                {% if consultation.medications %}
+                <div class="col-md-12 mb-4">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-warning text-dark rounded-top-4 py-3">
+                            <h5 class="mb-0">
+                                <i class="fas fa-pills me-2"></i>Prescribed Medications
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="alert alert-warning border-0 mb-3">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <small><strong>Prescription:</strong> Ensure patient understands dosage, frequency, and
+                                    duration.</small>
+                            </div>
+                            <p class="mb-0 prescribed-medications">{{ consultation.medications }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Laboratory Tests & Investigations -->
+                {% if consultation.tests %}
+                <div class="col-md-12 mb-4">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-info text-white rounded-top-4 py-3">
+                            <h5 class="mb-0">
+                                <i class="fas fa-flask me-2"></i>Laboratory Tests & Investigations
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="mb-0 lab-tests">{{ consultation.tests }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Consultation Fee & Summary -->
+            <div class="row">
+                {% if consultation.amt %}
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm border-0 rounded-4 h-100">
+                        <div class="card-body p-4 text-center">
+                            <i class="fas fa-money-bill-wave fa-2x text-success mb-3"></i>
+                            <h6 class="fw-bold mb-2">Consultation Fee</h6>
+                            <h3 class="text-success fw-bold mb-2">₦{{ '{:,.2f}'.format(consultation.amt) }}</h3>
+                            <small class="text-muted d-block mb-3">Professional charges</small>
+
+                            {% set payment = consultation.appointment.patient.payment|selectattr('pay_amt', 'equalto',
+                            consultation.amt)|selectattr('pay_patientid', 'equalto',
+                            consultation.appointment.patient_id)|first %}
+                            {% if payment %}
+                            {% if payment.pay_status == 'paid' %}
+                            <span class="badge bg-success w-100 py-2 mb-2">
+                                <i class="fas fa-check-circle me-1"></i>Payment Received
+                            </span>
+                            <div class="text-start mt-2">
+                                <small class="text-muted d-block"><strong>Ref:</strong> {{ payment.pay_ref }}</small>
+                                <small class="text-muted d-block"><strong>Date:</strong> {{
+                                    payment.pay_date.strftime("%b %d, %Y") }}</small>
+                            </div>
+                            {% elif payment.pay_status == 'pending' %}
+                            <span class="badge bg-warning text-dark w-100 py-2">
+                                <i class="fas fa-clock me-1"></i>Payment Pending
+                            </span>
+                            {% elif payment.pay_status == 'failed' %}
+                            <span class="badge bg-danger w-100 py-2">
+                                <i class="fas fa-times-circle me-1"></i>Payment Failed
+                            </span>
+                            {% endif %}
+                            {% else %}
+                            <span class="badge bg-danger w-100 py-2">
+                                <i class="fas fa-exclamation-circle me-1"></i>Awaiting Payment
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="col-md-{% if consultation.amt %}8{% else %}12{% endif %} mb-4">
+                    <div class="card shadow-sm border-0 rounded-4 h-100 bg-light">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-info-circle me-2 text-primary"></i>Consultation Summary
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-2">
+                                        <strong>Patient:</strong>
+                                        {{ consultation.appointment.patient.patient_fname }}
+                                        {{ consultation.appointment.patient.patient_lname }}
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>Consultation ID:</strong> #{{ consultation.cun_id }}
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2">
+                                        <strong>Date:</strong> {{ consultation.date.strftime("%b %d, %Y") }}
+                                    </p>
+                                    <p class="mb-2">
+                                        <strong>Status:</strong>
+                                        <span class="badge bg-success">Completed</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <h6 class="fw-bold mb-1">
+                                <i class="fas fa-check-circle me-2 text-success"></i>Consultation Completed
+                            </h6>
+                            <small class="text-muted">This record has been saved to the patient's medical
+                                history.</small>
+                        </div>
+                        <div>
+                            <a href="{{ url_for('doctor_appointments') }}" class="btn btn-primary px-4">
+                                <i class="fas fa-list me-2"></i>View All Appointments
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<style>
+    @media print {
+
+        .btn,
+        .sidebar,
+        nav,
+        footer,
+        .no-print {
+            display: none !important;
+        }
+
+        .card {
+            border: 1px solid #ddd !important;
+            box-shadow: none !important;
+            page-break-inside: avoid;
+        }
+
+        .card-header {
+            background-color: #f8f9fa !important;
+            color: #000 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        body {
+            background: white !important;
+        }
+    }
+</style>
+
+{% endblock %}

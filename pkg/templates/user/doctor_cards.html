@@ -1,0 +1,26 @@
+{% for d in doctors %}
+<div class="col-12 mb-4">
+    <div class="card shadow-sm border-0 p-3 doctor-card">
+        <div class="d-flex">
+
+            <img src="{{ url_for('static', filename='uploads/doctors/' + (d.doctor_profilepic or 'default_doc.png')) }}"
+                class="rounded me-3" style="height: 90px; width: 90px; object-fit: cover;">
+
+            <div>
+                <h5 class="fw-bold mb-1">Dr. {{ d.doctor_fname }} {{ d.doctor_lname }}</h5>
+                <p class="text-muted mb-0">{{ d.specialty.specialty_name }}</p>
+                <p class="text-muted mb-0">{{ d.doctor_experience }} years experience</p>
+                <p class="text-muted mb-1 text-capitalize">Gender: {{ d.doctor_gender }}</p>
+            </div>
+
+            <div class="ms-auto align-self-center">
+                <a class="btn btn-outline-success btn-sm rounded-pill"
+                    href="{{ url_for('doctor_profile', doctor_id=d.doctor_id) }}">
+                    View Profile
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endfor %}

@@ -1,0 +1,138 @@
+{% extends "doctors/dashboard_layout.html" %}
+{% block content %}
+<main class="container-fluid">
+    <div class="row">
+        <div class="col-lg-2 d-none d-lg-block"></div>
+        <div class="col-lg-10 p-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold mb-1"><i class="fas fa-calendar-alt me-2 text-primary"></i>My Schedule</h3>
+                    <small class="text-muted">Set your weekly availability and appointment slot duration.</small>
+                </div>
+                <a href="{{ url_for('doctor_appointments') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-list me-2"></i>Appointments
+                </a>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12 col-xl-7">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-white py-3">
+                            <h6 class="mb-0 fw-bold">Availability</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <form method="post" action="{{ url_for('doctor_schedule') }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <div class="d-flex flex-wrap gap-2">
+                                            {% set days =
+                                            ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'] %}
+                                            {% for d in days %}
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="{{ d }}"
+                                                    name="{{ d }}" {% if days_enabled and days_enabled.get(d)
+                                                    %}checked{% endif %}>
+                                                <label class="form-check-label" for="{{ d }}">{{ d.capitalize()
+                                                    }}</label>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Start Time</label>
+                                        <input type="time" class="form-control" name="start_time"
+                                            value="{% if schedule %}{{ schedule.start_time.strftime('%H:%M') }}{% endif %}"
+                                            required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">End Time</label>
+                                        <input type="time" class="form-control" name="end_time"
+                                            value="{% if schedule %}{{ schedule.end_time.strftime('%H:%M') }}{% endif %}"
+                                            required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Appointment Duration</label>
+                                        <select class="form-select" name="slot_duration">
+                                            {% set durations = [15,20,30,45,60] %}
+                                            {% for d in durations %}
+                                            <option value="{{ d }}" {% if schedule and schedule.slot_duration==d
+                                                %}selected{% endif %}>{{ d }} minutes</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">Max Appointments Per Slot</label>
+                                        <input type="number" min="1" class="form-control"
+                                            name="max_appointments_per_slot"
+                                            value="{% if schedule %}{{ schedule.max_appointments_per_slot }}{% else %}1{% endif %}">
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 d-flex gap-2">
+                                    <button class="btn btn-primary"><i class="fas fa-save me-2"></i>Save
+                                        Schedule</button>
+                                    <a href="{{ url_for('doctor_schedule') }}"
+                                        class="btn btn-outline-secondary">Reset</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-5">
+                    <div class="card shadow-sm border-0 rounded-4 h-100">
+                        <div class="card-header bg-white py-3">
+                            <h6 class="mb-0 fw-bold">Preview</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            {% if schedule %}
+                            <div class="mb-3">
+                                <span class="badge bg-primary-subtle text-primary">Working Days</span>
+                                <div class="mt-2 d-flex flex-wrap gap-2">
+                                    {% for d in days %}
+                                    {% if days_enabled and days_enabled.get(d) %}
+                                    <span class="badge bg-light text-dark border">{{ d.capitalize() }}</span>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <span class="badge bg-success-subtle text-success">Daily Hours</span>
+                                <p class="mt-2 mb-0">
+                                    {{ schedule.start_time.strftime('%I:%M %p') }} — {{
+                                    schedule.end_time.strftime('%I:%M %p') }}
+                                </p>
+                            </div>
+
+                            <div class="mb-3">
+                                <span class="badge bg-info-subtle text-info">Slot Duration</span>
+                                <p class="mt-2 mb-0">{{ schedule.slot_duration }} minutes</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <span class="badge bg-warning-subtle text-warning">Max per Slot</span>
+                                <p class="mt-2 mb-0">{{ schedule.max_appointments_per_slot }}</p>
+                            </div>
+
+                            {% else %}
+                            <div class="text-muted text-center py-5">
+                                <i class="fas fa-calendar-day fa-2x mb-3"></i>
+                                <p class="mb-0">No schedule set yet. Use the form to create your availability.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+{% endblock %}

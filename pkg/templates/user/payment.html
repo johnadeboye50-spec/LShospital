@@ -1,0 +1,255 @@
+{% extends "user/dashboard_layout.html" %}
+{% block content %}
+
+<main class="container-fluid">
+    <div class="row">
+
+        <div class="col-lg-2 d-none d-lg-block"></div>
+
+        <div class="col-lg-10 p-4">
+
+            <!-- Page Header -->
+            <div class="mb-4">
+                <h3 class="fw-bold mb-1">Payment</h3>
+                <p class="text-muted mb-0">
+                    <i class="fas fa-money-bill-wave me-2"></i>Complete your consultation payment
+                </p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+
+                    <!-- Payment Summary Card -->
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-gradient text-white rounded-top-4 py-3"
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <h5 class="mb-0">
+                                <i class="fas fa-file-invoice-dollar me-2"></i>Payment Summary
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block mb-1">Payment Reference</small>
+                                        <h6 class="fw-bold text-primary">{{ payment.pay_ref }}</h6>
+                                    </div>
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block mb-1">Patient Name</small>
+                                        <h6 class="fw-bold">{{ patient.patient_fname }} {{ patient.patient_lname }}</h6>
+                                    </div>
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block mb-1">Email</small>
+                                        <h6 class="fw-bold">{{ patient.patient_email }}</h6>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    {% if payment.consultation %}
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block mb-1">Consultation Date</small>
+                                        <h6 class="fw-bold">{{ payment.consultation.date.strftime('%b %d, %Y') }}</h6>
+                                    </div>
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block mb-1">Doctor</small>
+                                        <h6 class="fw-bold">
+                                            Dr. {{ payment.consultation.appointment.doctor.doctor_fname }}
+                                            {{ payment.consultation.appointment.doctor.doctor_lname }}
+                                        </h6>
+                                    </div>
+                                    {% endif %}
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block mb-1">Status</small>
+                                        <span
+                                            class="badge {% if payment.pay_status == 'paid' %}bg-success{% elif payment.pay_status == 'pending' %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                                            {{ payment.pay_status|upper }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold mb-0">Total Amount</h5>
+                                <h3 class="fw-bold text-success mb-0">₦{{ '{:,.2f}'.format(payment.pay_amt) }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method Selection -->
+                    <div class="card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="mb-0 fw-semibold">
+                                <i class="fas fa-wallet me-2 text-primary"></i>Select Payment Method
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+
+                            <!-- Online Transfer (Paystack) -->
+                            <div class="payment-option card border-2 mb-3 hover-shadow"
+                                style="cursor: pointer; transition: all 0.3s;" onclick="selectPayment('transfer')">
+                                <div class="card-body p-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="paymentMethod"
+                                                id="transferRadio" value="transfer">
+                                        </div>
+                                        <div class="ms-3 flex-grow-1">
+                                            <h6 class="fw-bold mb-1">
+                                                <i class="fas fa-credit-card me-2 text-primary"></i>
+                                                Online Transfer (Card/Bank)
+                                            </h6>
+                                            <p class="text-muted mb-0 small">
+                                                Pay securely with your debit/credit card or bank transfer via Paystack
+                                            </p>
+                                        </div>
+                                        <div class="text-end">
+                                            <img src="/static/images/paystack_logo.png" alt="Paystack" height="40">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Cash Payment -->
+                            <div class="payment-option card border-2 mb-3 hover-shadow"
+                                style="cursor: pointer; transition: all 0.3s;" onclick="selectPayment('cash')">
+                                <div class="card-body p-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="paymentMethod"
+                                                id="cashRadio" value="cash">
+                                        </div>
+                                        <div class="ms-3 flex-grow-1">
+                                            <h6 class="fw-bold mb-1">
+                                                <i class="fas fa-money-bill-wave me-2 text-success"></i>
+                                                Cash Payment at Hospital
+                                            </h6>
+                                            <p class="text-muted mb-0 small">
+                                                Pay in cash at the hospital reception. Your reference number will be
+                                                provided.
+                                            </p>
+                                        </div>
+                                        <div class="text-end">
+                                            <i class="fas fa-building fa-3x text-success"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Form for Transfer -->
+                            <form id="transferForm" method="POST" action="{{ url_for('paystack_step1') }}"
+                                style="display: none;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <div class="alert alert-info border-0">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <small>You will be redirected to Paystack secure payment page</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-lock me-2"></i>Proceed to Secure Payment
+                                </button>
+                            </form>
+
+                            <!-- Payment Form for Cash -->
+                            <form id="cashForm" method="POST" action="{{ url_for('process_cash_payment') }}"
+                                style="display: none;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <div class="alert alert-warning border-0">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <small><strong>Important:</strong> After clicking confirm, please visit the hospital
+                                        reception to complete your payment. You will receive a reference number.</small>
+                                </div>
+                                <button type="submit" class="btn btn-success btn-lg w-100">
+                                    <i class="fas fa-check-circle me-2"></i>Confirm Cash Payment
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+
+                    <!-- Security Info -->
+                    <div class="card shadow-sm border-0 rounded-4 bg-light">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h6 class="fw-bold mb-2">
+                                        <i class="fas fa-shield-alt me-2 text-success"></i>Secure Payment
+                                    </h6>
+                                    <p class="text-muted mb-0 small">
+                                        Your payment information is encrypted and secure. We use industry-standard
+                                        security measures to protect your data.
+                                    </p>
+                                </div>
+                                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                    <a href="{% if payment.consultation %}{{ url_for('patient_view_consultation', id=payment.consultation.app_id) }}{% else %}{{ url_for('patient_dashboard') }}{% endif %}"
+                                        class="btn btn-outline-secondary">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<style>
+    .payment-option:hover {
+        border-color: #667eea !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    }
+
+    .payment-option.selected {
+        border-color: #667eea !important;
+        background-color: #f8f9ff;
+    }
+
+    .hover-shadow {
+        transition: all 0.3s ease;
+    }
+
+    .bg-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+</style>
+
+<script>
+    function selectPayment(method) {
+        // Remove selected class from all options
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+
+        // Hide all forms
+        document.getElementById('transferForm').style.display = 'none';
+        document.getElementById('cashForm').style.display = 'none';
+
+        // Select the chosen option
+        if (method === 'transfer') {
+            document.getElementById('transferRadio').checked = true;
+            document.getElementById('transferRadio').closest('.payment-option').classList.add('selected');
+            document.getElementById('transferForm').style.display = 'block';
+        } else if (method === 'cash') {
+            document.getElementById('cashRadio').checked = true;
+            document.getElementById('cashRadio').closest('.payment-option').classList.add('selected');
+            document.getElementById('cashForm').style.display = 'block';
+        }
+    }
+
+    // Add click handlers to the entire card
+    document.querySelectorAll('.payment-option').forEach(option => {
+        option.addEventListener('click', function (e) {
+            if (e.target.type !== 'radio') {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.click();
+            }
+        });
+    });
+</script>
+
+{% endblock %}

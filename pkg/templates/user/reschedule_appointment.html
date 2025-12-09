@@ -1,0 +1,40 @@
+{% extends "user/dashboard_layout.html" %}
+{% block content %}
+
+<main class="container mt-5">
+
+    <div class="col-lg-6 mx-auto">
+
+        <div class="card shadow-sm border-0 p-4">
+
+            <h4 class="fw-bold mb-3">Reschedule Appointment</h4>
+
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label class="form-label">New Date</label>
+                    <input type="date" name="date" class="form-control" required value="{{ app.appointment_date }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">New Time</label>
+                    <input type="time" name="time" class="form-control" required value="{{ app.appointment_time }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Additional Note (Optional)</label>
+                    <textarea name="note" class="form-control" rows="4">{{ app.patient_note }}</textarea>
+                </div>
+
+                <button class="btn btn-primary w-100">
+                    Save Changes
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</main>
+
+{% endblock %}

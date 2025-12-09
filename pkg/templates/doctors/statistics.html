@@ -1,0 +1,291 @@
+{% extends "doctors/dashboard_layout.html" %}
+{% block content %}
+
+<main class="container-fluid">
+    <div class="row">
+        <div class="col-lg-2 d-none d-lg-block"></div>
+        <div class="col-lg-10 p-4">
+
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold mb-1">
+                        <i class="fas fa-chart-line me-2 text-primary"></i>Statistics & Analytics
+                    </h3>
+                    <small class="text-muted">Comprehensive overview of your practice performance</small>
+                </div>
+                <div>
+                    <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Overall Statistics Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 col-sm-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                        <i class="fas fa-calendar-check fa-2x text-primary"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="text-muted mb-1 small">Total Appointments</h6>
+                                    <h3 class="fw-bold mb-0">{{ total_appointments }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                        <i class="fas fa-users fa-2x text-success"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="text-muted mb-1 small">Total Patients</h6>
+                                    <h3 class="fw-bold mb-0">{{ total_patients }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-info bg-opacity-10 rounded-3 p-3">
+                                        <i class="fas fa-stethoscope fa-2x text-info"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="text-muted mb-1 small">Consultations</h6>
+                                    <h3 class="fw-bold mb-0">{{ total_consultations }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                                        <i class="fas fa-money-bill-wave fa-2x text-warning"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="text-muted mb-1 small">Total Revenue</h6>
+                                    <h3 class="fw-bold mb-0">₦{{ "{:,.2f}".format(total_revenue) }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- This Month Statistics -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="mb-0 fw-bold">
+                                <i class="fas fa-calendar-alt me-2 text-primary"></i>This Month's Performance
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="text-center p-3 bg-light rounded-3">
+                                        <i class="fas fa-calendar-day fa-2x text-primary mb-2"></i>
+                                        <h4 class="fw-bold mb-1">{{ this_month_appointments }}</h4>
+                                        <small class="text-muted">Appointments</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center p-3 bg-light rounded-3">
+                                        <i class="fas fa-notes-medical fa-2x text-success mb-2"></i>
+                                        <h4 class="fw-bold mb-1">{{ this_month_consultations }}</h4>
+                                        <small class="text-muted">Consultations</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center p-3 bg-light rounded-3">
+                                        <i class="fas fa-dollar-sign fa-2x text-warning mb-2"></i>
+                                        <h4 class="fw-bold mb-1">₦{{ "{:,.2f}".format(this_month_revenue) }}</h4>
+                                        <small class="text-muted">Revenue</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointment Status Breakdown -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h6 class="mb-0 fw-bold">
+                                <i class="fas fa-list-check me-2 text-primary"></i>Appointment Status Breakdown
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="p-3 bg-success bg-opacity-10 rounded-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <small class="text-muted d-block">Accepted</small>
+                                                <h4 class="fw-bold mb-0 text-success">{{ accepted_appointments }}</h4>
+                                            </div>
+                                            <i class="fas fa-check-circle fa-2x text-success"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-3 bg-primary bg-opacity-10 rounded-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <small class="text-muted d-block">Completed</small>
+                                                <h4 class="fw-bold mb-0 text-primary">{{ completed_appointments }}</h4>
+                                            </div>
+                                            <i class="fas fa-clipboard-check fa-2x text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-3 bg-warning bg-opacity-10 rounded-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <small class="text-muted d-block">Pending</small>
+                                                <h4 class="fw-bold mb-0 text-warning">{{ pending_appointments }}</h4>
+                                            </div>
+                                            <i class="fas fa-clock fa-2x text-warning"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 bg-danger bg-opacity-10 rounded-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <small class="text-muted d-block">Declined</small>
+                                                <h4 class="fw-bold mb-0 text-danger">{{ declined_appointments }}</h4>
+                                            </div>
+                                            <i class="fas fa-times-circle fa-2x text-danger"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 bg-secondary bg-opacity-10 rounded-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <small class="text-muted d-block">Cancelled</small>
+                                                <h4 class="fw-bold mb-0 text-secondary">{{ cancelled_appointments }}
+                                                </h4>
+                                            </div>
+                                            <i class="fas fa-ban fa-2x text-secondary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue & Top Diagnoses Row -->
+            <div class="row g-3 mb-4">
+                <!-- Revenue Breakdown -->
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h6 class="mb-0 fw-bold">
+                                <i class="fas fa-coins me-2 text-primary"></i>Revenue Overview
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted">Total Revenue (Paid)</span>
+                                    <strong class="text-success">₦{{ "{:,.2f}".format(total_revenue) }}</strong>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-success" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted">Pending Revenue</span>
+                                    <strong class="text-warning">₦{{ "{:,.2f}".format(pending_revenue) }}</strong>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-warning"
+                                        style="width: {{ (pending_revenue / (total_revenue + pending_revenue) * 100) if (total_revenue + pending_revenue) > 0 else 0 }}%">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted">Average Consultation Fee</span>
+                                    <strong class="text-primary">₦{{ "{:,.2f}".format(avg_fee) }}</strong>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-primary" style="width: 75%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Diagnoses -->
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h6 class="mb-0 fw-bold">
+                                <i class="fas fa-clipboard-list me-2 text-primary"></i>Most Common Diagnoses
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            {% if top_diagnoses %}
+                            {% for diagnosis, count in top_diagnoses %}
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-truncate" style="max-width: 70%;">{{ diagnosis }}</span>
+                                    <strong class="text-primary">{{ count }}</strong>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-primary"
+                                        style="width: {{ (count / top_diagnoses[0][1] * 100) }}%"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-chart-bar fa-3x mb-3 opacity-25"></i>
+                                <p>No diagnosis data available yet</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+{% endblock %}

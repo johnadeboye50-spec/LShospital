@@ -1,0 +1,266 @@
+{% extends "user/dashboard_layout.html" %}
+{% block content %}
+
+<main class="container-fluid">
+    <div class="row">
+
+        <div class="col-lg-2 d-none d-lg-block"></div>
+
+        <div class="col-lg-10 p-4">
+
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold mb-1">Medical Consultation Record</h3>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        {{ consultation.date.strftime("%B %d, %Y at %I:%M %p") }}
+                    </p>
+                </div>
+                <div>
+                    <button onclick="window.print()" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-print me-2"></i>Print Record
+                    </button>
+                    <a href="{{ url_for('patient_appointments') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back
+                    </a>
+                </div>
+            </div>
+
+            <!-- Doctor & Appointment Info Card -->
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <img src="/static/uploads/doctors/{{ consultation.appointment.doctor.doctor_profilepic or 'default_doc.png' }}"
+                                    class="rounded-circle border border-3 border-primary" width="80" height="80"
+                                    style="object-fit:cover;">
+                                <div class="ms-3">
+                                    <h5 class="fw-bold mb-1">
+                                        Dr. {{ consultation.appointment.doctor.doctor_fname }}
+                                        {{ consultation.appointment.doctor.doctor_lname }}
+                                    </h5>
+                                    <p class="text-primary mb-1">
+                                        <i class="fas fa-stethoscope me-2"></i>
+                                        {{ consultation.appointment.doctor.specialty.specialty_name }}
+                                    </p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-award me-2"></i>
+                                        {{ consultation.appointment.doctor.doctor_experience }} years experience
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-3 mt-md-0">
+                            <div class="bg-light rounded-3 p-3">
+                                <h6 class="fw-bold mb-3 text-dark">
+                                    <i class="fas fa-calendar-check me-2 text-primary"></i>Appointment Details
+                                </h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Date</small>
+                                        <strong>{{ consultation.appointment.appointment_date.strftime("%b %d, %Y")
+                                            }}</strong>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Time</small>
+                                        <strong>{{ consultation.appointment.appointment_time.strftime("%I:%M %p")
+                                            }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diagnosis Section -->
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-header bg-primary text-white rounded-top-4 py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-diagnoses me-2"></i>Diagnosis
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <p class="mb-0" style="white-space: pre-line; line-height: 1.8;">{{ consultation.diagnose }}</p>
+                </div>
+            </div>
+
+            <!-- Treatment Plan Section -->
+            {% if consultation.treatment %}
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-header bg-success text-white rounded-top-4 py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-medkit me-2"></i>Treatment Plan
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <p class="mb-0" style="white-space: pre-line; line-height: 1.8;">{{ consultation.treatment }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Prescribed Medications Section -->
+            {% if consultation.medications %}
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-header bg-warning text-dark rounded-top-4 py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-pills me-2"></i>Prescribed Medications
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info border-0 mb-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <small>Please follow the prescribed dosage and duration. Consult your doctor before making any
+                            changes.</small>
+                    </div>
+                    <p class="mb-0" style="white-space: pre-line; line-height: 1.8;">{{ consultation.medications }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Laboratory Tests Section -->
+            {% if consultation.tests %}
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-header bg-info text-white rounded-top-4 py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-flask me-2"></i>Recommended Laboratory Tests
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <p class="mb-0" style="white-space: pre-line; line-height: 1.8;">{{ consultation.tests }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Additional Information -->
+            <div class="row">
+                <!-- Patient Note -->
+                {% if consultation.appointment.patient_note %}
+                <div class="col-md-{% if consultation.amt %}6{% else %}12{% endif %} mb-4">
+                    <div class="card shadow-sm border-0 rounded-4 h-100">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-comment-medical me-2 text-primary"></i>Your Initial Note
+                            </h6>
+                            <p class="text-muted mb-0" style="line-height: 1.8;">{{
+                                consultation.appointment.patient_note }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Consultation Fee & Payment -->
+                {% if consultation.amt %}
+                <div class="col-md-{% if consultation.appointment.patient_note %}6{% else %}12{% endif %} mb-4">
+                    <div class="card shadow-sm border-0 rounded-4 h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h6 class="fw-bold mb-0">
+                                    <i class="fas fa-money-bill-wave me-2 text-success"></i>Consultation Fee
+                                </h6>
+                                {% set payment = consultation.payments|selectattr('pay_patientid', 'equalto',
+                                consultation.appointment.patient_id)|first %}
+                                {% if payment %}
+                                {% if payment.pay_status == 'paid' %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle me-1"></i>Paid
+                                </span>
+                                {% elif payment.pay_status == 'pending' %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-clock me-1"></i>Pending
+                                </span>
+                                {% elif payment.pay_status == 'failed' %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times-circle me-1"></i>Failed
+                                </span>
+                                {% endif %}
+                                {% else %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>Unpaid
+                                </span>
+                                {% endif %}
+                            </div>
+                            <h3 class="text-success fw-bold mb-2">₦{{ '{:,.2f}'.format(consultation.amt) }}</h3>
+                            <small class="text-muted d-block mb-3">Professional consultation charges</small>
+
+                            {% if not payment or payment.pay_status != 'paid' %}
+                            {% if payment and payment.pay_status == 'pending' and payment.pay_method == 'cash' %}
+                            <div class="alert alert-info border-0 mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <small><strong>Cash Payment Pending</strong><br>
+                                    Reference: {{ payment.pay_ref }}<br>
+                                    Please pay at the hospital reception.</small>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-warning border-0 mb-3">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <small>Payment is required to complete this consultation record.</small>
+                            </div>
+                            <a href="{{ url_for('initiate_payment', consultation_id=consultation.cun_id) }}"
+                                class="btn btn-success w-100">
+                                <i class="fas fa-credit-card me-2"></i>Proceed to Payment
+                            </a>
+                            {% endif %}
+                            {% else %}
+                            <div class="alert alert-success border-0 mb-0">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <small><strong>Payment Completed</strong><br>
+                                    Reference: {{ payment.pay_ref }}<br>
+                                    Date: {{ payment.pay_date.strftime("%b %d, %Y at %I:%M %p") }}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="card shadow-sm border-0 rounded-4 bg-light">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h6 class="fw-bold mb-2">
+                                <i class="fas fa-exclamation-circle me-2 text-warning"></i>Important Reminder
+                            </h6>
+                            <p class="text-muted mb-0 small">
+                                This consultation record is for your reference. Please keep it safe and follow all
+                                medical advice.
+                                Contact your doctor immediately if you experience any adverse reactions or have
+                                concerns.
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                            <a href="{{ url_for('patient_appointments') }}" class="btn btn-primary px-4">
+                                <i class="fas fa-list me-2"></i>View All Appointments
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<style>
+    @media print {
+
+        .btn,
+        .sidebar,
+        nav,
+        footer {
+            display: none !important;
+        }
+
+        .card {
+            border: 1px solid #ddd !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+
+{% endblock %}

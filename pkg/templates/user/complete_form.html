@@ -1,0 +1,79 @@
+{% extends "user/dashboard_layout.html" %}
+
+{% block content %}
+<main class="container-fluid px-4 py-4">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-header bg-white border-0 py-3 d-flex align-items-center">
+                    <h6 class="m-0 fw-semibold">
+                        Complete your profile to continue booking an appointment
+                    </h6>
+                    <i class="fas fa-user-edit ms-auto text-primary"></i>
+                </div>
+
+                <div class="card-body px-4 py-4">
+
+                    <form method="POST" action="">
+                        {{ conform.csrf_token }}
+
+                        <!-- Gender + DOB Row -->
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">{{ conform.gender.label }}</label>
+                                {{ conform.gender(class="form-select form-select-lg rounded-3") }}
+
+                                {% for error in conform.gender.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">{{ conform.dob.label }}</label>
+                                {{ conform.dob(class="form-control form-control-lg rounded-3", type="date") }}
+
+                                {% for error in conform.dob.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="mt-4">
+                            <label class="form-label fw-medium">{{ conform.address.label }}</label>
+                            {{ conform.address(class="form-control form-control-lg rounded-3", rows="3") }}
+
+                            {% for error in conform.address.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="mt-4">
+                            <label class="form-label fw-medium">{{ conform.phone.label }}</label>
+                            {{ conform.phone(class="form-control form-control-lg rounded-3") }}
+
+                            {% for error in conform.phone.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Button -->
+                        <div class="mt-4 text-end">
+                            <button type="submit" class="btn btn-primary btn-lg px-4 rounded-3 shadow-sm">
+                                Update Profile
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+{% endblock content %}

@@ -1,0 +1,127 @@
+{% extends "user/user_layout.html" %}
+
+{% block banner %}
+<section class="py-5 bg-primary bg-gradient text-white">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+            <div>
+                <h1 class="h2 fw-bold mb-1">Find a Doctor</h1>
+                <p class="mb-0 opacity-75">Search and filter doctors at LifeSpring Hospital</p>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 bg-transparent p-0">
+                    <li class="breadcrumb-item">
+                        <a href="{{ url_for('home') }}" class="text-white opacity-75">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Doctors</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</section>
+{% endblock banner %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+
+        <!-- LEFT FILTER PANEL -->
+        <div class="col-lg-4 mb-4">
+
+            <!-- SEARCH BOX -->
+            <div class="card shadow-sm border-0 p-3 mb-4">
+                <h5 class="fw-semibold mb-3">Search</h5>
+                <input id="searchInput" type="text" class="form-control" placeholder="Search doctor or specialty">
+            </div>
+
+            <!-- SPECIALTY FILTER -->
+            <div class="card shadow-sm border-0 p-3 mb-4">
+                <h6 class="fw-semibold mb-3">Specialty</h6>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="btn btn-primary btn-sm specialty-btn active" data-specialty="any">
+                        All
+                    </button>
+
+                    {% for s in specialties %}
+                    <button class="btn btn-outline-primary btn-sm specialty-btn" data-specialty="{{ s.specialty_id }}">
+                        {{ s.specialty_name }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- GENDER FILTER -->
+            <div class="card shadow-sm border-0 p-3">
+                <h6 class="fw-semibold mb-3">Gender</h6>
+
+                <div class="d-flex flex-column gap-2">
+                    <label><input type="radio" name="gender" value="any" checked> Any</label>
+                    <label><input type="radio" name="gender" value="male"> Male</label>
+                    <label><input type="radio" name="gender" value="female"> Female</label>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- DOCTOR LIST HOLDER -->
+        <div class="col-lg-8">
+            <div id="doctorList" class="row">
+                {% include 'user/doctor_cards.html' %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- AJAX SCRIPT -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const searchInput = document.getElementById("searchInput");
+        const genderRadios = document.querySelectorAll("input[name='gender']");
+        const specialtyButtons = document.querySelectorAll(".specialty-btn");
+        const doctorList = document.getElementById("doctorList");
+
+        // MAIN FILTER FUNCTION
+        function updateDoctors() {
+            let search = searchInput.value;
+            let gender = document.querySelector("input[name='gender']:checked").value;
+            let specialty = document.querySelector(".specialty-btn.active").dataset.specialty;
+
+            fetch("/doctors/filter", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token() }}" },
+                body: JSON.stringify({ search, gender, specialty })
+            })
+                .then(res => res.text())
+                .then(html => {
+                    doctorList.innerHTML = html;
+                });
+        }
+
+        // SEARCH INPUT LISTENER
+        searchInput.addEventListener("keyup", updateDoctors);
+
+        // GENDER RADIO LISTENER
+        genderRadios.forEach(radio => {
+            radio.addEventListener("change", updateDoctors);
+        });
+
+        // SPECIALTY BUTTON LISTENER
+        specialtyButtons.forEach(btn => {
+            btn.addEventListener("click", function () {
+
+                specialtyButtons.forEach(b => b.classList.remove("active", "btn-primary"));
+                specialtyButtons.forEach(b => b.classList.add("btn-outline-primary"));
+
+                this.classList.remove("btn-outline-primary");
+                this.classList.add("btn-primary", "active");
+
+                updateDoctors();
+            });
+        });
+    });
+</script>
+
+{% endblock content %}

@@ -1,0 +1,78 @@
+{% extends 'admin/admin_dashboardlayout.html' %}
+
+{% block title %}Appointments - Admin{% endblock %}
+
+{% block content %}
+<main class="container-fluid">
+    <div class="row">
+        <!-- Desktop sidebar placeholder -->
+        <div class="col-lg-2 d-none d-lg-block"></div>
+
+        <div class="col-lg-10 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">All Appointments</h2>
+                    <p class="text-muted mb-0">List of appointments with status, doctor, and patient</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Doctor</th>
+                                    <th>Patient</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if appointments and appointments|length > 0 %}
+                                {% for appt in appointments %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ appt.appointment_date.strftime('%Y-%m-%d') if appt.appointment_date else '-'
+                                        }}</td>
+                                    <td>{{ appt.appointment_time.strftime('%H:%M') if appt.appointment_time else '-' }}
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge {% if appt.status == 'pending' %}bg-warning text-dark{% elif appt.status == 'accepted' %}bg-info{% elif appt.status == 'completed' %}bg-success{% elif appt.status == 'cancelled' %}bg-secondary{% elif appt.status == 'declined' %}bg-danger{% elif appt.status == 'booked' %}bg-primary{% else %}bg-light text-dark{% endif %}">
+                                            {{ appt.status|capitalize }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if appt.doctor %}
+                                        Dr. {{ appt.doctor.doctor_lname }} {{ appt.doctor.doctor_fname }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appt.patient %}
+                                        {{ appt.patient.patient_lname }} {{ appt.patient.patient_fname }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">No appointments found.
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,270 @@
+{% extends "user/dashboard_layout.html" %}
+{% block content %}
+
+<main class="container-fluid">
+    <div class="row">
+
+        <div class="col-lg-2 d-none d-lg-block"></div>
+
+        <div class="col-lg-10 p-4">
+
+            <!-- Page Header -->
+            <div class="mb-4">
+                <h3 class="fw-bold mb-1">Payment History</h3>
+                <p class="text-muted mb-0">
+                    <i class="fas fa-receipt me-2"></i>View all your payment transactions
+                </p>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0 rounded-4 bg-success text-white">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <small class="opacity-75 d-block mb-1">Total Paid</small>
+                                    <h3 class="fw-bold mb-0">₦{{ '{:,.2f}'.format(total_paid) }}</h3>
+                                </div>
+                                <i class="fas fa-check-circle fa-3x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0 rounded-4 bg-warning text-dark">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <small class="opacity-75 d-block mb-1">Pending</small>
+                                    <h3 class="fw-bold mb-0">₦{{ '{:,.2f}'.format(total_pending) }}</h3>
+                                </div>
+                                <i class="fas fa-clock fa-3x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0 rounded-4 bg-primary text-white">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <small class="opacity-75 d-block mb-1">Total Transactions</small>
+                                    <h3 class="fw-bold mb-0">{{ total_transactions }}</h3>
+                                </div>
+                                <i class="fas fa-file-invoice-dollar fa-3x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payments Table -->
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-semibold">
+                            <i class="fas fa-list me-2 text-primary"></i>All Transactions
+                        </h5>
+                        <small class="text-muted">{{ payments|length }} total</small>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    {% if payments and payments|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="px-4 py-3 border-0">Reference</th>
+                                    <th class="py-3 border-0">Date</th>
+                                    <th class="py-3 border-0">Amount</th>
+                                    <th class="py-3 border-0">Method</th>
+                                    <th class="py-3 border-0">Status</th>
+                                    <th class="py-3 border-0">Consultation</th>
+                                    <th class="px-4 py-3 border-0 text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in payments %}
+                                <tr>
+                                    <td class="px-4">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-receipt text-primary me-2"></i>
+                                            <div>
+                                                <div class="fw-semibold">{{ payment.pay_ref }}</div>
+                                                <small class="text-muted">ID: #{{ payment.pay_id }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>{{ payment.pay_date.strftime('%b %d, %Y') }}</div>
+                                        <small class="text-muted">{{ payment.pay_date.strftime('%I:%M %p') }}</small>
+                                    </td>
+                                    <td>
+                                        <strong class="text-success">₦{{ '{:,.2f}'.format(payment.pay_amt) }}</strong>
+                                    </td>
+                                    <td>
+                                        {% if payment.pay_method == 'transfer' %}
+                                        <span class="badge bg-primary">
+                                            <i class="fas fa-credit-card me-1"></i>Transfer
+                                        </span>
+                                        {% elif payment.pay_method == 'cash' %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-money-bill-wave me-1"></i>Cash
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if payment.pay_status == 'paid' %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle me-1"></i>Paid
+                                        </span>
+                                        {% elif payment.pay_status == 'pending' %}
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-clock me-1"></i>Pending
+                                        </span>
+                                        {% elif payment.pay_status == 'failed' %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-times-circle me-1"></i>Failed
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if payment.consultation %}
+                                        <a href="{{ url_for('patient_view_consultation', id=payment.consultation.app_id) }}"
+                                            class="text-decoration-none">
+                                            <i class="fas fa-file-medical text-info me-1"></i>
+                                            <small>View</small>
+                                        </a>
+                                        {% else %}
+                                        <small class="text-muted">-</small>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-4 text-end">
+                                        {% if payment.pay_status == 'paid' %}
+                                        <button class="btn btn-sm btn-outline-primary"
+                                            onclick="showReceipt({{ payment.pay_id }})">
+                                            <i class="fas fa-file-download me-1"></i>Receipt
+                                        </button>
+                                        {% elif payment.pay_status == 'pending' and payment.pay_method != 'cash' %}
+                                        <a href="{{ url_for('initiate_payment', consultation_id=payment.cun_id) }}"
+                                            class="btn btn-sm btn-success">
+                                            <i class="fas fa-redo me-1"></i>Retry
+                                        </a>
+                                        {% elif payment.pay_status == 'pending' and payment.pay_method == 'cash' %}
+                                        <small class="text-muted">Pay at reception</small>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-receipt fa-4x text-primary mb-3 opacity-25"></i>
+                        <h5 class="fw-bold mb-2">No Payment History</h5>
+                        <p class="mb-3">You haven't made any payments yet.</p>
+                        <a href="{{ url_for('patient_appointments') }}" class="btn btn-primary">
+                            <i class="fas fa-calendar-alt me-2"></i>View Appointments
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Payment Methods Info -->
+            <div class="row g-3 mt-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-credit-card me-2 text-primary"></i>Online Payment
+                            </h6>
+                            <p class="small text-muted mb-0">
+                                Secure online payments via Paystack. Your card information is encrypted and safe.
+                                Payments are instantly verified.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-building me-2 text-success"></i>Cash Payment
+                            </h6>
+                            <p class="small text-muted mb-0">
+                                Pay in cash at the hospital reception. Please bring your payment reference number.
+                                Payment will be verified by our staff.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<!-- Receipt Modal (for future implementation) -->
+<div class="modal fade" id="receiptModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-receipt me-2"></i>Payment Receipt
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="receiptContent">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showReceipt(paymentId) {
+        // For future implementation - show receipt details
+        alert('Receipt feature coming soon! Payment ID: ' + paymentId);
+    }
+</script>
+
+<style>
+    .table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9ff;
+        transform: scale(1.01);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .badge {
+        padding: 0.4em 0.8em;
+        font-weight: 500;
+    }
+
+    .card {
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+    }
+</style>
+
+{% endblock %}

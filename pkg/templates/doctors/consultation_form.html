@@ -1,0 +1,90 @@
+{% extends "doctors/dashboard_layout.html" %}
+{% block content %}
+
+<main class="container-fluid">
+    <div class="row">
+
+        <div class="col-lg-2 d-none d-lg-block"></div>
+
+        <div class="col-lg-10 p-4">
+
+            <h3 class="fw-bold mb-4">
+                Consultation for {{ app.patient.patient_fname }} {{ app.patient.patient_lname }}
+            </h3>
+
+            <div class="card shadow-sm border-0 rounded-4 p-4">
+
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <!-- Appointment Details -->
+                    <div class="mb-4">
+                        <h5 class="fw-semibold">Appointment Details</h5>
+
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">Date</small>
+                                <strong>{{ app.appointment_date }}</strong>
+                            </div>
+
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">Time</small>
+                                <strong>{{ app.appointment_time }}</strong>
+                            </div>
+
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">Patient Note</small>
+                                <strong>{{ app.patient_note or "None" }}</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Diagnosis -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Diagnosis *</label>
+                        <textarea name="diagnose" class="form-control" rows="3" placeholder="Enter diagnosis..."
+                            required></textarea>
+                    </div>
+
+                    <!-- Treatment Plan -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Treatment Plan</label>
+                        <textarea name="treatment" class="form-control" rows="3"
+                            placeholder="Describe the treatment plan..."></textarea>
+                    </div>
+
+                    <!-- Medications -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Medications</label>
+                        <textarea name="medications" class="form-control" rows="3"
+                            placeholder="List medications prescribed..."></textarea>
+                    </div>
+
+                    <!-- Tests Requested -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tests Requested</label>
+                        <textarea name="tests" class="form-control" rows="3"
+                            placeholder="Specify any tests needed..."></textarea>
+                    </div>
+
+                    <!-- Amount -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Consultation Fee (₦)</label>
+                        <input type="number" name="amt" class="form-control" placeholder="Optional">
+                    </div>
+
+                    <div class="mt-4 d-flex justify-content-end">
+                        <a href="{{ url_for('doctor_appointments') }}" class="btn btn-secondary me-2">Cancel</a>
+                        <button class="btn btn-primary">Save Consultation</button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</main>
+
+{% endblock %}

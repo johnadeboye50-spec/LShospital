@@ -1,0 +1,351 @@
+{% extends "user/user_layout.html"%}
+
+{%block banner %}
+<section class="py-5 bg-primary bg-gradient text-white">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+            <div>
+                <h1 class="h2 fw-bold mb-1">Our Services</h1>
+                <p class="mb-0 opacity-75">Comprehensive healthcare services for your wellbeing</p>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 bg-transparent p-0">
+                    <li class="breadcrumb-item"><a href="{{ url_for('home') }}" class="text-white opacity-75">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Services</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</section>
+{% endblock banner %}
+
+{%block content%}
+<!-- Services Overview -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">What We Offer</h2>
+            <p class="lead text-muted">Life Spring Hospital provides a wide range of medical services with
+                state-of-the-art facilities and experienced professionals</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Emergency Care -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <div class="bg-danger bg-gradient text-white rounded-circle p-4 d-inline-flex">
+                                <i class="fas fa-ambulance fa-3x"></i>
+                            </div>
+                        </div>
+                        <h4 class="card-title fw-bold text-center mb-3">Emergency Care</h4>
+                        <p class="text-muted text-center mb-4">24/7 emergency services with rapid response team,
+                            advanced life support, and trauma care.</p>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>24/7 Emergency Room
+                            </li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Ambulance Services
+                            </li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Trauma Care</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Critical Care Unit
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Surgery -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <div class="bg-primary bg-gradient text-white rounded-circle p-4 d-inline-flex">
+                                <i class="fas fa-procedures fa-3x"></i>
+                            </div>
+                        </div>
+                        <h4 class="card-title fw-bold text-center mb-3">Surgical Services</h4>
+                        <p class="text-muted text-center mb-4">Advanced surgical procedures with modern operation
+                            theaters and experienced surgeons.</p>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>General Surgery</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Minimally Invasive
+                                Surgery</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Orthopedic Surgery
+                            </li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Day Surgery</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maternity -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <div class="bg-info bg-gradient text-white rounded-circle p-4 d-inline-flex">
+                                <i class="fas fa-baby fa-3x"></i>
+                            </div>
+                        </div>
+                        <h4 class="card-title fw-bold text-center mb-3">Maternity Care</h4>
+                        <p class="text-muted text-center mb-4">Comprehensive maternal and newborn care with modern labor
+                            rooms and NICU facilities.</p>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Prenatal Care</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Labor & Delivery</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Postnatal Care</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>NICU Services</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diagnostics -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <div class="bg-warning bg-gradient text-white rounded-circle p-4 d-inline-flex">
+                                <i class="fas fa-x-ray fa-3x"></i>
+                            </div>
+                        </div>
+                        <h4 class="card-title fw-bold text-center mb-3">Diagnostic Services</h4>
+                        <p class="text-muted text-center mb-4">State-of-the-art diagnostic equipment for accurate and
+                            timely medical assessments.</p>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Laboratory Tests</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Radiology & Imaging
+                            </li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>CT & MRI Scans</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Ultrasound</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cardiology -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <div class="bg-danger bg-gradient text-white rounded-circle p-4 d-inline-flex">
+                                <i class="fas fa-heartbeat fa-3x"></i>
+                            </div>
+                        </div>
+                        <h4 class="card-title fw-bold text-center mb-3">Cardiology</h4>
+                        <p class="text-muted text-center mb-4">Comprehensive heart care with advanced cardiac
+                            diagnostics and treatment options.</p>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>ECG & Echo Tests</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Cardiac
+                                Catheterization</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Heart Disease
+                                Management</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Preventive Cardiology
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pediatrics -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <div class="bg-success bg-gradient text-white rounded-circle p-4 d-inline-flex">
+                                <i class="fas fa-child fa-3x"></i>
+                            </div>
+                        </div>
+                        <h4 class="card-title fw-bold text-center mb-3">Pediatrics</h4>
+                        <p class="text-muted text-center mb-4">Specialized care for children from infancy through
+                            adolescence with child-friendly environment.</p>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Well-Child Checkups
+                            </li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Vaccinations</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Child Development</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Pediatric Emergency
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Additional Services -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">More Specialized Services</h2>
+            <p class="text-muted">We offer a wide range of specialized medical services</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-eye fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">Ophthalmology</h5>
+                        <p class="text-muted small mb-0">Eye care and vision correction services</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-tooth fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">Dental Care</h5>
+                        <p class="text-muted small mb-0">Complete dental treatment and oral health</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-brain fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">Neurology</h5>
+                        <p class="text-muted small mb-0">Brain and nervous system disorders</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-bone fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">Orthopedics</h5>
+                        <p class="text-muted small mb-0">Bone, joint, and muscle treatment</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-lungs fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">Pulmonology</h5>
+                        <p class="text-muted small mb-0">Respiratory and lung disease care</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-pills fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">Pharmacy</h5>
+                        <p class="text-muted small mb-0">In-house pharmacy with expert pharmacists</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-dna fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">Genetics</h5>
+                        <p class="text-muted small mb-0">Genetic counseling and testing</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-spa fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">Wellness</h5>
+                        <p class="text-muted small mb-0">Health screening and wellness programs</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Our Services -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">Why Choose Our Services</h2>
+            <p class="text-muted">Experience healthcare excellence with Life Spring Hospital</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="text-center">
+                    <div class="bg-primary bg-gradient text-white rounded-circle p-4 d-inline-flex mb-3">
+                        <i class="fas fa-award fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold">Accredited Facility</h5>
+                    <p class="text-muted">JCI accredited hospital with international standards</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="text-center">
+                    <div class="bg-success bg-gradient text-white rounded-circle p-4 d-inline-flex mb-3">
+                        <i class="fas fa-user-md fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold">Expert Doctors</h5>
+                    <p class="text-muted">Highly qualified and experienced medical professionals</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="text-center">
+                    <div class="bg-info bg-gradient text-white rounded-circle p-4 d-inline-flex mb-3">
+                        <i class="fas fa-laptop-medical fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold">Modern Technology</h5>
+                    <p class="text-muted">State-of-the-art medical equipment and facilities</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="text-center">
+                    <div class="bg-warning bg-gradient text-white rounded-circle p-4 d-inline-flex mb-3">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold">24/7 Availability</h5>
+                    <p class="text-muted">Round-the-clock emergency and critical care services</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary bg-gradient text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="fw-bold mb-3">Need Medical Assistance?</h2>
+                <p class="lead mb-0">Book an appointment with our specialists or visit our emergency department for
+                    immediate care.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                {% if session.get('patient_id') %}
+                <a href="{{ url_for('book_appointment') }}" class="btn btn-light btn-lg">
+                    <i class="fas fa-calendar-plus me-2"></i>Book Appointment
+                </a>
+                {% else %}
+                <a href="{{ url_for('user_login') }}" class="btn btn-light btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i>Get Started
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+
+{%block why %}
+<!-- Optional additional content -->
+{%endblock why %}

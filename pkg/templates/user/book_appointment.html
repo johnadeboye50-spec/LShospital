@@ -1,0 +1,533 @@
+{% extends "user/dashboard_layout.html" %}
+{% block content %}
+
+<main class="container-fluid">
+    <div class="row">
+        <div class="col-lg-2 d-none d-lg-block"></div>
+        <div class="col-lg-10 p-4">
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+            <div class="row mb-3">
+                <div class="col-12">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Page Header -->
+            <div class="mb-4">
+                <h3 class="fw-bold mb-1">
+                    <i class="fas fa-calendar-plus me-2 text-primary"></i>Book New Appointment
+                </h3>
+                <p class="text-muted mb-0">Select a doctor, choose an available time slot, and describe your
+                    symptoms</p>
+            </div>
+
+            <!-- Progress Steps -->
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-center flex-fill step-indicator" id="step1-indicator">
+                            <div class="step-circle active">1</div>
+                            <small class="d-block mt-2 fw-semibold">Choose Doctor</small>
+                        </div>
+                        <div class="step-line"></div>
+                        <div class="text-center flex-fill step-indicator" id="step2-indicator">
+                            <div class="step-circle">2</div>
+                            <small class="d-block mt-2 fw-semibold">Select Date & Time</small>
+                        </div>
+                        <div class="step-line"></div>
+                        <div class="text-center flex-fill step-indicator" id="step3-indicator">
+                            <div class="step-circle">3</div>
+                            <small class="d-block mt-2 fw-semibold">Confirm Details</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Main Content -->
+                <div class="col-12 col-xl-8">
+
+                    <!-- Step 1: Choose Doctor -->
+                    <div class="card shadow-sm border-0 rounded-4" id="step1">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <h6 class="mb-0 fw-bold">
+                                    <i class="fas fa-user-md me-2 text-primary"></i>Select Doctor
+                                </h6>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <button class="btn btn-sm btn-dark rounded-pill specialty-filter active"
+                                        data-specialty="all">All</button>
+                                    {% for s in specialties %}
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill specialty-filter"
+                                        data-specialty="{{ s.specialty_name }}">
+                                        {{ s.specialty_name }}
+                                    </button>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-3" id="doctor-list">
+                                {% for d in doctors %}
+                                {% set schedule = schedules.get(d.doctor_id) %}
+                                <div class="col-12 col-md-6 doctor-card-wrapper"
+                                    data-specialty="{{ d.specialty.specialty_name }}">
+                                    <div class="card border doctor-card h-100" style="cursor: pointer;"
+                                        data-doctor-id="{{ d.doctor_id }}"
+                                        data-doctor-name="Dr. {{ d.doctor_fname }} {{ d.doctor_lname }}"
+                                        data-doctor-specialty="{{ d.specialty.specialty_name }}"
+                                        data-doctor-experience="{{ d.doctor_experience }}"
+                                        data-doctor-pic="/static/uploads/doctors/{{ d.doctor_profilepic or 'default_doc.png' }}"
+                                        {% if schedule %}
+                                        data-schedule-days='{{ {"monday": schedule.monday, "tuesday": schedule.tuesday, "wednesday": schedule.wednesday, "thursday": schedule.thursday, "friday": schedule.friday, "saturday": schedule.saturday, "sunday": schedule.sunday}|tojson }}'
+                                        data-schedule-start="{{ schedule.start_time.strftime('%H:%M') }}"
+                                        data-schedule-end="{{ schedule.end_time.strftime('%H:%M') }}"
+                                        data-schedule-duration="{{ schedule.slot_duration }}" {% else %}
+                                        data-schedule-days='{}' {% endif %}>
+                                        <div class="card-body p-3">
+                                            <div class="d-flex align-items-center">
+                                                <img src="/static/uploads/doctors/{{ d.doctor_profilepic or 'default_doc.png' }}"
+                                                    class="rounded-circle border border-2" width="70" height="70"
+                                                    style="object-fit: cover;">
+                                                <div class="ms-3 flex-grow-1">
+                                                    <h6 class="fw-bold mb-1">Dr. {{ d.doctor_fname }} {{
+                                                        d.doctor_lname }}</h6>
+                                                    <p class="text-primary mb-1 small">
+                                                        <i class="fas fa-stethoscope me-1"></i>{{
+                                                        d.specialty.specialty_name }}
+                                                    </p>
+                                                    <p class="text-muted mb-1 small">
+                                                        <i class="fas fa-award me-1"></i>{{ d.doctor_experience
+                                                        }} years experience
+                                                    </p>
+                                                    {% if schedule %}
+                                                    {% set is_available_today = schedule[today_weekday] if today_weekday
+                                                    else False %}
+                                                    {% if is_available_today %}
+                                                    <span class="badge bg-success-subtle text-success">
+                                                        <i class="fas fa-check-circle me-1"></i>Available Today
+                                                    </span>
+                                                    {% else %}
+                                                    <span class="badge bg-danger-subtle text-danger">
+                                                        <i class="fas fa-times-circle me-1"></i>Unavailable Today
+                                                    </span>
+                                                    {% endif %}
+                                                    {% else %}
+                                                    <span class="badge bg-warning-subtle text-warning">
+                                                        <i class="fas fa-exclamation-circle me-1"></i>Schedule
+                                                        not set
+                                                    </span>
+                                                    {% endif %}
+                                                </div>
+                                                <i class="fas fa-chevron-right text-muted"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Choose Date & Time -->
+                    <div class="card shadow-sm border-0 rounded-4 mt-4" id="step2" style="display: none;">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h6 class="mb-0 fw-bold">
+                                <i class="fas fa-calendar-alt me-2 text-primary"></i>Select Date & Time
+                            </h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Choose Date</label>
+                                    <input type="date" id="appointment-date" class="form-control form-control-lg"
+                                        min="{{ current_date }} " value="{{current_date}}">
+                                    <small class="text-muted mt-2 d-block" id="date-info">Select a date to see
+                                        available time slots</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Available Time Slots</label>
+                                    <div id="time-slots-container" class="d-flex flex-wrap gap-2">
+                                        <p class="text-muted">Please select a date first</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 d-flex gap-2">
+                                <button class="btn btn-secondary" onclick="goToStep(1)">
+                                    <i class="fas fa-arrow-left me-2"></i>Back
+                                </button>
+                                <button class="btn btn-primary" onclick="goToStep(3)" id="continue-to-step3">
+                                    Continue<i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Confirm & Submit -->
+                    <div class="card shadow-sm border-0 rounded-4 mt-4" id="step3" style="display: none;">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h6 class="mb-0 fw-bold">
+                                <i class="fas fa-check-circle me-2 text-primary"></i>Confirm Details
+                            </h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <form method="POST" id="booking-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="doctor_id" id="doctor-id-field">
+                                <input type="hidden" name="appointment_date" id="date-field">
+                                <input type="hidden" name="appointment_time" id="time-field">
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold">Describe Your Symptoms / Reason for
+                                        Visit</label>
+                                    <textarea name="patient_note" class="form-control" rows="4"
+                                        placeholder="Please provide details about your symptoms, concerns, or reason for this appointment..."
+                                        required></textarea>
+                                    <small class="text-muted">This information helps the doctor prepare for your
+                                        consultation</small>
+                                </div>
+
+                                <div class="alert alert-info border-0">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Note:</strong> Your appointment will be pending until the doctor
+                                    confirms it. You will receive a notification once confirmed.
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-secondary" onclick="goToStep(2)">
+                                        <i class="fas fa-arrow-left me-2"></i>Back
+                                    </button>
+                                    <button type="submit" class="btn btn-success flex-grow-1">
+                                        <i class="fas fa-check me-2"></i>Book Appointment
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Sidebar: Selected Doctor & Appointment Summary -->
+                <div class="col-12 col-xl-4">
+                    <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top: 20px;">
+                        <div class="card-header bg-primary text-white rounded-top-4 py-3">
+                            <h6 class="mb-0 fw-bold">
+                                <i class="fas fa-clipboard-list me-2"></i>Appointment Summary
+                            </h6>
+                        </div>
+                        <div class="card-body p-4" id="summary-content">
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-user-md fa-3x mb-3 opacity-50"></i>
+                                <p class="mb-0">Select a doctor to begin</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e9ecef;
+        color: #6c757d;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .step-indicator.active .step-circle {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .step-line {
+        height: 2px;
+        background: #e9ecef;
+        flex-grow: 1;
+    }
+
+    .doctor-card {
+        transition: all 0.2s;
+    }
+
+    .doctor-card:hover {
+        border-color: #0d6efd !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .doctor-card.selected {
+        border-color: #0d6efd !important;
+        border-width: 2px !important;
+        background: #f8f9ff;
+    }
+
+    .time-slot-btn {
+        min-width: 90px;
+    }
+
+    .specialty-filter.active {
+        background: #0d6efd;
+        color: white;
+        border-color: #0d6efd;
+    }
+</style>
+
+<script>
+    let selectedDoctor = null;
+    let selectedDate = null;
+    let selectedTime = null;
+    let currentStep = 1;
+
+    // Step Navigation
+    function goToStep(step) {
+        document.getElementById(`step${currentStep}`).style.display = 'none';
+        document.getElementById(`step${currentStep}-indicator`).classList.remove('active');
+
+        currentStep = step;
+
+        document.getElementById(`step${step}`).style.display = 'block';
+        document.getElementById(`step${step}-indicator`).classList.add('active');
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Doctor Selection
+    document.querySelectorAll('.doctor-card').forEach(card => {
+        card.addEventListener('click', function () {
+            const doctorId = this.dataset.doctorId;
+            const schedule = this.dataset.scheduleDays ? JSON.parse(this.dataset.scheduleDays) : {};
+
+            if (Object.keys(schedule).length === 0) {
+                alert('⚠️ This doctor has not set their schedule yet. Please choose another doctor.');
+                return;
+            }
+
+            // Check if doctor is available today
+            const today = new Date();
+            const todayName = today.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+
+            if (!schedule[todayName]) {
+                alert(`⚠️ Doctor is not available today (${todayName.charAt(0).toUpperCase() + todayName.slice(1)}). Please choose another doctor.`);
+                return;
+            }
+
+            selectedDoctor = {
+                id: doctorId,
+                name: this.dataset.doctorName,
+                specialty: this.dataset.doctorSpecialty,
+                experience: this.dataset.doctorExperience,
+                pic: this.dataset.doctorPic,
+                schedule: schedule,
+                startTime: this.dataset.scheduleStart,
+                endTime: this.dataset.scheduleEnd,
+                duration: parseInt(this.dataset.scheduleDuration) || 30
+            };
+
+            document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+
+            // Ensure selectedDate defaults to today's date
+            const dateInputEl = document.getElementById('appointment-date');
+            if (!selectedDate || selectedDate === '') {
+                selectedDate = dateInputEl.value;
+            }
+
+            // Move to step 2 and auto-generate time slots for default date
+            updateSummary();
+            setTimeout(() => {
+                goToStep(2);
+                // Only generate if doctor is available on the selected date's weekday
+                const date = new Date(selectedDate);
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+                if (selectedDoctor.schedule[dayName]) {
+                    generateTimeSlots();
+                } else {
+                    const container = document.getElementById('time-slots-container');
+                    container.innerHTML = '<p class="text-danger">Doctor is not available today.</p>';
+                }
+                updateSummary();
+            }, 300);
+        });
+    });
+
+    // Date Selection with Schedule Check
+    document.getElementById('appointment-date').addEventListener('change', function () {
+        const date = new Date(this.value);
+        const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+
+        if (!selectedDoctor.schedule[dayName]) {
+            alert(`Doctor is not available on ${dayName}s. Please select another date.`);
+            this.value = '';
+            return;
+        }
+
+        selectedDate = this.value;
+        generateTimeSlots();
+        updateSummary();
+    });
+
+    // Generate Time Slots Based on Doctor Schedule
+    function generateTimeSlots() {
+        const container = document.getElementById('time-slots-container');
+        container.innerHTML = '';
+
+        const start = selectedDoctor.startTime.split(':');
+        const end = selectedDoctor.endTime.split(':');
+        const duration = selectedDoctor.duration;
+
+        let currentTime = new Date();
+        currentTime.setHours(parseInt(start[0]), parseInt(start[1]), 0);
+
+        const endTime = new Date();
+        endTime.setHours(parseInt(end[0]), parseInt(end[1]), 0);
+
+        while (currentTime < endTime) {
+            const timeStr = currentTime.toTimeString().slice(0, 5);
+            const displayTime = currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-outline-primary time-slot-btn rounded-pill';
+            btn.textContent = displayTime;
+            btn.dataset.time = timeStr;
+
+            btn.addEventListener('click', function () {
+                selectedTime = this.dataset.time;
+                document.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('btn-primary'));
+                document.querySelectorAll('.time-slot-btn').forEach(b => b.classList.add('btn-outline-primary'));
+                this.classList.remove('btn-outline-primary');
+                this.classList.add('btn-primary');
+                updateSummary();
+            });
+
+            container.appendChild(btn);
+            currentTime.setMinutes(currentTime.getMinutes() + duration);
+        }
+
+        document.getElementById('date-info').textContent = `Available slots for ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`;
+    }
+
+    // Update Summary Sidebar
+    function updateSummary() {
+        let html = '';
+
+        if (selectedDoctor) {
+            html = `
+                    <div class="text-center mb-4">
+                        <img src="${selectedDoctor.pic}" class="rounded-circle border border-3 border-primary" width="100" height="100" style="object-fit: cover;">
+                        <h5 class="fw-bold mt-3 mb-1">${selectedDoctor.name}</h5>
+                        <p class="text-primary mb-1">${selectedDoctor.specialty}</p>
+                        <small class="text-muted">${selectedDoctor.experience} years experience</small>
+                    </div>
+                    <hr>
+                `;
+
+            if (selectedDate) {
+                const dateObj = new Date(selectedDate);
+                html += `
+                        <div class="mb-3">
+                            <small class="text-muted d-block mb-1">Date</small>
+                            <strong><i class="fas fa-calendar me-2 text-primary"></i>${dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</strong>
+                        </div>
+                    `;
+            }
+
+            if (selectedTime) {
+                const timeObj = new Date(`2000-01-01T${selectedTime}`);
+                html += `
+                        <div class="mb-3">
+                            <small class="text-muted d-block mb-1">Time</small>
+                            <strong><i class="fas fa-clock me-2 text-primary"></i>${timeObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</strong>
+                        </div>
+                    `;
+            }
+
+            if (selectedDate && selectedTime) {
+                html += `
+                        <div class="alert alert-success border-0 mt-3">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <small>Ready to book! Complete the form to confirm.</small>
+                        </div>
+                        <hr>
+                        <a href="/doctor/${selectedDoctor.id}" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="fas fa-user-md me-2"></i>View Doctor Profile
+                        </a>
+                    `;
+            }
+        } else {
+            html = `
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-user-md fa-3x mb-3 opacity-50"></i>
+                        <p class="mb-0">Select a doctor to begin</p>
+                    </div>
+                `;
+        }
+
+        document.getElementById('summary-content').innerHTML = html;
+    }
+
+    // Form Submission
+    document.getElementById('booking-form').addEventListener('submit', function (e) {
+        // Ensure selectedDate is set even if user didn't change the date input
+        if (!selectedDate) {
+            selectedDate = document.getElementById('appointment-date').value;
+        }
+        document.getElementById('doctor-id-field').value = selectedDoctor?.id || document.querySelector('.doctor-card.selected')?.dataset.doctorId || '';
+        document.getElementById('date-field').value = selectedDate;
+        document.getElementById('time-field').value = selectedTime;
+    });
+
+    // Specialty Filter
+    document.querySelectorAll('.specialty-filter').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const specialty = this.dataset.specialty;
+
+            document.querySelectorAll('.specialty-filter').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            document.querySelectorAll('.doctor-card-wrapper').forEach(wrapper => {
+                if (specialty === 'all' || wrapper.dataset.specialty === specialty) {
+                    wrapper.style.display = 'block';
+                } else {
+                    wrapper.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Initialize
+    const dateInput = document.getElementById('appointment-date');
+    dateInput.min = '{{ current_date }}';
+    // Pre-populate selectedDate to today's date so backend receives it
+    selectedDate = dateInput.value;
+    // If a doctor card is pre-selected (e.g., via state), generate slots
+    // This keeps behavior consistent when returning to the page
+    if (selectedDoctor && selectedDate) {
+        const date = new Date(selectedDate);
+        const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+        if (selectedDoctor.schedule && selectedDoctor.schedule[dayName]) {
+            generateTimeSlots();
+        }
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,247 @@
+{% extends 'user/user_layout.html'%}
+
+{%block banner %}
+<section class="hero-section">
+    <div class="container-fluid px-0">
+        <div class="_banner d-flex align-items-center justify-content-center">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-7 col-md-8 animate__animated animate__fadeInLeft">
+                        <div class="hero-content px-4 py-5">
+                            <h1 class="display-4 fw-bold text-white mb-4">Easy Appointments,<br>Better Health</h1>
+                            <p class="lead text-white-50 mb-4">Experience world-class healthcare with our team of
+                                dedicated professionals, available whenever you need us.</p>
+                            <div class="d-flex flex-wrap gap-3">
+                                <a href="{{ url_for('book_appointment') }}" class="btn btn-primary btn-lg px-4 py-3">
+                                    <i class="fas fa-calendar-plus me-2"></i>Book Appointment
+                                </a>
+                                <a href="{{ url_for('about') }}" class="btn btn-outline-light btn-lg px-4 py-3">
+                                    <i class="fas fa-arrow-right me-2"></i>Learn More
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock banner %}
+
+{%block content%}
+<!-- Welcome Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center text-center mb-5">
+            <div class="col-lg-8">
+                <h2 class="display-5 fw-bold mb-3">Welcome to Life Spring Hospital</h2>
+                <p class="lead text-muted">We are committed to providing exceptional healthcare services with a focus on
+                    patient-centered care, innovation, and community well-being.</p>
+            </div>
+        </div>
+
+        <!-- Feature Section 1 -->
+        <div class="row align-items-center mb-5 py-4">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="pe-lg-4">
+                    <h3 class="display-6 fw-bold mb-3">Your Health, Our Priority</h3>
+                    <p class="text-muted mb-3">Quality care begins with the right people. Our doctors and consultants
+                        work together to provide expert treatment in a comfortable, patient-centered environment.</p>
+                    <p class="text-muted mb-4">From first diagnosis, we are here every step of the way to ensure you get
+                        the right care and support you deserve.</p>
+                    <a href="{{ url_for('doctors_page') }}"
+                        class="btn btn-link text-primary p-0 mb-3 d-inline-flex align-items-center">
+                        Learn more about our specialists <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                    <div class="mt-4">
+                        <a href="{{ url_for('book_appointment') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-calendar-check me-2"></i>Request An Appointment
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="/static/images/doct.jpg" alt="Medical Professional" class="img-fluid rounded-4 shadow-lg">
+            </div>
+        </div>
+
+        <!-- Feature Section 2 -->
+        <div class="row align-items-center py-4">
+            <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                <div class="ps-lg-4">
+                    <h3 class="display-6 fw-bold mb-3">Healing Starts with Trust</h3>
+                    <p class="text-muted mb-3">At Life Spring Hospital, we believe trust is the foundation of every
+                        healing journey. Our team of experienced specialists ensures you receive care you can rely on.
+                    </p>
+                    <p class="text-muted mb-4">We're dedicated to making world-class healthcare accessible to every
+                        patient through compassionate, evidence-based treatment.</p>
+                    <a href="{{ url_for('about') }}"
+                        class="btn btn-link text-primary p-0 mb-3 d-inline-flex align-items-center">
+                        Learn about our mission <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                    <div class="mt-4">
+                        <a href="{{ url_for('services') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-heartbeat me-2"></i>Our Services
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <img src="/static/images/baby.jpg" alt="Patient Care" class="img-fluid rounded-4 shadow-lg">
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+
+{%block why %}
+<!-- Why Choose Us Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center text-center mb-5">
+            <div class="col-lg-8">
+                <h2 class="display-5 fw-bold mb-3">Why Choose Life Spring Hospital</h2>
+                <p class="lead text-muted">Committed to excellence in healthcare delivery</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Feature Card 1 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-primary bg-gradient text-white rounded-4 d-inline-flex align-items-center justify-content-center mb-3"
+                            style="width: 60px; height: 60px;">
+                            <i class="fa-solid fa-heart-pulse fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Patient-Centered Care</h5>
+                        <p class="text-muted mb-3">We care about you, not just your condition. Our team takes time to
+                            listen, understand your needs, and create treatment plans tailored to your life.</p>
+                        <a href="{{ url_for('about') }}" class="btn btn-link text-primary p-0 small">
+                            Learn more <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Card 2 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-success bg-gradient text-white rounded-4 d-inline-flex align-items-center justify-content-center mb-3"
+                            style="width: 60px; height: 60px;">
+                            <i class="fa-solid fa-user-doctor fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Experienced Professionals</h5>
+                        <p class="text-muted mb-3">Our doctors and medical staff are highly trained experts with years
+                            of experience delivering excellent patient outcomes through personalized care.</p>
+                        <a href="{{ url_for('doctors_page') }}" class="btn btn-link text-primary p-0 small">
+                            Meet our team <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Card 3 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-warning bg-gradient text-white rounded-4 d-inline-flex align-items-center justify-content-center mb-3"
+                            style="width: 60px; height: 60px;">
+                            <i class="fa-regular fa-lightbulb fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Innovation & Research</h5>
+                        <p class="text-muted mb-3">We stay ahead with modern medical practices and ongoing research to
+                            ensure the best possible outcomes for our patients.</p>
+                        <a href="{{ url_for('about') }}" class="btn btn-link text-primary p-0 small">
+                            Discover innovations <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Card 4 -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="feature-icon bg-info bg-gradient text-white rounded-4 d-inline-flex align-items-center justify-content-center mb-3"
+                            style="width: 60px; height: 60px;">
+                            <i class="fa-regular fa-handshake fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Accessible & Reliable</h5>
+                        <p class="text-muted mb-3">Healthcare should be available when you need it. We offer convenient
+                            scheduling and comprehensive services designed around your needs.</p>
+                        <a href="{{ url_for('about') }}" class="btn btn-link text-primary p-0 small">
+                            View services <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .hero-section {
+        position: relative;
+        overflow: hidden;
+    }
+
+    ._banner {
+        min-height: 500px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        position: relative;
+    }
+
+    ._banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('/static/images/pattern.svg') repeat;
+        opacity: 0.1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 1rem 3rem rgba(0, 0, 0, .175) !important;
+    }
+
+    .feature-icon {
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover .feature-icon {
+        transform: scale(1.1);
+    }
+
+    @media (max-width: 768px) {
+        ._banner {
+            min-height: 400px;
+        }
+
+        .display-4 {
+            font-size: 2rem;
+        }
+
+        .display-5 {
+            font-size: 1.75rem;
+        }
+
+        .display-6 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{%endblock why %}

@@ -1,0 +1,367 @@
+{% extends "user/user_layout.html"%}
+
+{%block banner %}
+<section class="py-5 bg-primary bg-gradient text-white">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+            <div>
+                <h1 class="h2 fw-bold mb-1">About Us</h1>
+                <p class="mb-0 opacity-75">Learn more about Life Spring Hospital</p>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 bg-transparent p-0">
+                    <li class="breadcrumb-item"><a href="{{ url_for('home') }}" class="text-white opacity-75">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">About</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</section>
+{% endblock banner %}
+
+{%block content%}
+<!-- Who We Are Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-4">Who We Are</h2>
+                <p class="lead text-muted mb-4">Life Spring Hospital was founded with a simple yet powerful mission: to
+                    make quality healthcare accessible, compassionate, and patient-centered.</p>
+                <p>From our humble beginnings, we've grown into a trusted medical center dedicated to improving lives
+                    through advanced technology, experienced professionals, and genuine care.</p>
+                <p>At Life Spring, we believe that healing goes beyond treatment. Our team works together to ensure
+                    every patient receives personalized attention, comfort, and respect. Whether it's a routine checkup
+                    or specialized care, we're here to serve with excellence and empathy every step of the way.</p>
+            </div>
+            <div class="col-lg-6">
+                <img src="/static/images/hospital_pic.jpg" alt="about image" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mx-auto text-center mb-5">
+                <h2 class="fw-bold mb-4">Our Mission</h2>
+                <p class="lead">The mission of Life Spring Hospital is to enhance the health and well-being of our
+                    community and beyond by providing accessible, compassionate, and high-quality medical care. We are
+                    committed to setting a high standard in healthcare delivery, medical innovation, and
+                    patient-centered service.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-heartbeat fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Compassionate Care</h5>
+                        <p class="card-text text-muted">Deliver care guided by empathy and respect for every patient.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-user-md fa-3x text-success"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Professional Excellence</h5>
+                        <p class="card-text text-muted">Empower healthcare professionals through training and
+                            innovation.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-microscope fa-3x text-info"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Advanced Technology</h5>
+                        <p class="card-text text-muted">Use modern technology for accurate diagnosis and treatment.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-hands-helping fa-3x text-warning"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Preventive Health</h5>
+                        <p class="card-text text-muted">Promote preventive healthcare and public health awareness.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="p-5">
+                    <div class="rounded-circle bg-primary bg-gradient text-white mx-auto mb-4 d-flex align-items-center justify-content-center"
+                        style="width: 150px; height: 150px;">
+                        <div>
+                            <h2 class="fw-bold mb-0">120K+</h2>
+                            <small>Patients</small>
+                        </div>
+                    </div>
+                    <p class="text-muted">We have proudly provided quality healthcare to over 120,000 patients, ensuring
+                        every individual receives personalized attention and compassionate medical care.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-5">
+                    <div class="rounded-circle bg-success bg-gradient text-white mx-auto mb-4 d-flex align-items-center justify-content-center"
+                        style="width: 150px; height: 150px;">
+                        <div>
+                            <h2 class="fw-bold mb-0">8K+</h2>
+                            <small>Surgeries</small>
+                        </div>
+                    </div>
+                    <p class="text-muted">More than 8,000 successful surgeries have been performed by our experienced
+                        surgeons, using advanced techniques and state-of-the-art equipment to ensure patient safety and
+                        recovery.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-5">
+                    <div class="rounded-circle bg-info bg-gradient text-white mx-auto mb-4 d-flex align-items-center justify-content-center"
+                        style="width: 150px; height: 150px;">
+                        <div>
+                            <h2 class="fw-bold mb-0">250+</h2>
+                            <small>Professionals</small>
+                        </div>
+                    </div>
+                    <p class="text-muted">Our dedicated team of over 250 qualified doctors, nurses, and specialists work
+                        together every day to deliver the highest standards of medical excellence and patient care.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="py-5 bg-dark text-white">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-4">About Our Team</h2>
+                <div class="border-bottom border-primary mb-4" style="width: 80px; border-width: 3px !important;"></div>
+                <p class="mb-4">At Life Spring Hospital, our greatest asset is our dedicated team of healthcare
+                    professionals. From skilled doctors and compassionate nurses to expert specialists and support
+                    staff, every member of our team shares one mission: to provide safe, quality, and patient-centered
+                    care.</p>
+                <p class="mb-4">Our professionals bring years of experience across various fields, working together to
+                    deliver personalized treatment and ensure the best possible outcomes. Through collaboration,
+                    innovation, and continuous training, our team remains at the forefront of modern medical practice.
+                </p>
+                <p class="mb-4">We are also deeply committed to community health and medical education, supporting
+                    outreach programs, research, and mentorship to shape the future of healthcare.</p>
+                <div class="d-flex gap-3 mt-4">
+                    <a href="{{ url_for('doctors_page') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-user-md me-2"></i>Meet Our Doctors
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="/static/images/teams.jpg" alt="team image" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Core Values Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">Our Core Values</h2>
+            <p class="lead text-muted">The principles that guide everything we do</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary bg-gradient text-white rounded-circle p-3 me-3">
+                                <i class="fas fa-shield-alt fa-2x"></i>
+                            </div>
+                            <h5 class="fw-bold mb-0">Integrity</h5>
+                        </div>
+                        <p class="text-muted mb-0">We maintain the highest ethical standards in all our practices,
+                            ensuring transparency and honesty with our patients.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-success bg-gradient text-white rounded-circle p-3 me-3">
+                                <i class="fas fa-award fa-2x"></i>
+                            </div>
+                            <h5 class="fw-bold mb-0">Excellence</h5>
+                        </div>
+                        <p class="text-muted mb-0">We strive for excellence in every aspect of healthcare delivery, from
+                            diagnosis to treatment and recovery.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-info bg-gradient text-white rounded-circle p-3 me-3">
+                                <i class="fas fa-users fa-2x"></i>
+                            </div>
+                            <h5 class="fw-bold mb-0">Teamwork</h5>
+                        </div>
+                        <p class="text-muted mb-0">Collaboration between our medical staff ensures comprehensive care
+                            and better outcomes for all patients.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-warning bg-gradient text-white rounded-circle p-3 me-3">
+                                <i class="fas fa-lightbulb fa-2x"></i>
+                            </div>
+                            <h5 class="fw-bold mb-0">Innovation</h5>
+                        </div>
+                        <p class="text-muted mb-0">We embrace new technologies and medical advancements to provide
+                            cutting-edge treatment options.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-danger bg-gradient text-white rounded-circle p-3 me-3">
+                                <i class="fas fa-heart fa-2x"></i>
+                            </div>
+                            <h5 class="fw-bold mb-0">Compassion</h5>
+                        </div>
+                        <p class="text-muted mb-0">Every patient is treated with kindness, understanding, and the utmost
+                            respect for their dignity.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-secondary bg-gradient text-white rounded-circle p-3 me-3">
+                                <i class="fas fa-balance-scale fa-2x"></i>
+                            </div>
+                            <h5 class="fw-bold mb-0">Accountability</h5>
+                        </div>
+                        <p class="text-muted mb-0">We take full responsibility for our actions and outcomes, ensuring
+                            quality care at every level.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Accreditation & Recognition Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3">Accreditation & Recognition</h2>
+            <p class="lead text-muted">Trusted by patients, recognized by professionals</p>
+        </div>
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        <h4 class="fw-bold mb-4">Our Certifications</h4>
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <strong>Joint Commission International (JCI) Accredited</strong>
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <strong>ISO 9001:2015 Quality Management Certified</strong>
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <strong>National Healthcare Safety Network (NHSN) Member</strong>
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <strong>Best Hospital Award 2024 - Healthcare Excellence</strong>
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <strong>Patient Safety Excellence Award</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        <h4 class="fw-bold mb-4">Why It Matters</h4>
+                        <p class="text-muted mb-3">Our accreditations and certifications are more than just awards—they
+                            represent our unwavering commitment to patient safety, quality care, and continuous
+                            improvement.</p>
+                        <p class="text-muted mb-3">Every certification is earned through rigorous evaluation of our
+                            practices, procedures, and outcomes. This means you can trust that when you choose Life
+                            Spring Hospital, you're choosing a facility that meets and exceeds international healthcare
+                            standards.</p>
+                        <p class="text-muted mb-0">We regularly undergo external audits and reviews to ensure we
+                            maintain these high standards and continue to provide the best possible care for our
+                            patients.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary bg-gradient text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="fw-bold mb-3">Ready to Experience Quality Healthcare?</h2>
+                <p class="lead mb-0">Join thousands of satisfied patients who trust Life Spring Hospital for their
+                    healthcare needs.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                {% if session.get('patient_id') %}
+                <a href="{{ url_for('book_appointment') }}" class="btn btn-light btn-lg">
+                    <i class="fas fa-calendar-plus me-2"></i>Book Appointment
+                </a>
+                {% else %}
+                <a href="{{ url_for('user_login') }}" class="btn btn-light btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i>Get Started
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
+
+{%block why %}
+<!-- why choose LIFE SPRING Hospital -->
+{%endblock why %}
