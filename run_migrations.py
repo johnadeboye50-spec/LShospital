@@ -1,14 +1,26 @@
 #!/usr/bin/env python
 """Run database migrations before starting the app."""
-import subprocess
+import os
 import sys
 
+# Set the Flask app for migrations
+os.environ['FLASK_APP'] = 'pkg'
+
+print("=" * 50)
 print("Running database migrations...")
-result = subprocess.run(["flask", "db", "upgrade"], capture_output=True, text=True)
-print(result.stdout)
-if result.stderr:
-    print(result.stderr, file=sys.stderr)
-if result.returncode != 0:
-    print(f"Migration failed with code {result.returncode}", file=sys.stderr)
-    sys.exit(result.returncode)
-print("Migrations complete!")
+print("=" * 50)
+
+try:
+    from flask_migrate import upgrade
+    from pkg import app, db
+    
+    with app.app_context():
+        # Run the upgrade
+        upgrade()
+        print("✓ Migrations completed successfully!")
+        print("=" * 50)
+except Exception as e:
+    print(f"✗ Migration failed: {e}", file=sys.stderr)
+    import traceback
+    traceback.print_exc()
+    sys.exit(1)
