@@ -43,5 +43,4 @@ def create_app():
 
 app = create_app()
 
-from migrations import env
 from pkg import config, patient_routes, admin_routes, models, forms, doctor_route
