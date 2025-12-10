@@ -9,7 +9,12 @@ def create_app():
     from pkg import config
     from pkg.models import db, Patient, Doctor   # <-- added Patient & Doctor import
 
-    app = Flask(__name__, instance_relative_config=True, static_folder='pkg/static', template_folder='pkg/templates')
+    app = Flask(__name__, instance_relative_config=True)
+    
+    # Set template and static folders relative to the pkg module directory
+    app.template_folder = os.path.join(os.path.dirname(__file__), 'templates')
+    app.static_folder = os.path.join(os.path.dirname(__file__), 'static')
+    
     app.config.from_pyfile('config.py', silent=True)
     
     # Use environment to determine config
