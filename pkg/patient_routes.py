@@ -46,19 +46,19 @@ def home():
         patient = Patient.query.get(session['patient_id'])
     if session.get('doctor_id'):
         doctor = Doctor.query.get(session['doctor_id'])
-    return render_template('/user/home.html', deets=patient, doctor=doctor)
+    return render_template('user/home.html', deets=patient, doctor=doctor)
 
 @app.get('/about/')
 def about():
-    return render_template('/user/about.html')
+    return render_template('user/about.html')
 
 @app.get('/services/')
 def services():
-    return render_template('/user/services.html')
+    return render_template('user/services.html')
 
 @app.get('/contact/')
 def contact():
-    return render_template('/user/contact.html')
+    return render_template('user/contact.html')
 
 @app.get('/login/')
 def login_page():
@@ -67,7 +67,7 @@ def login_page():
     if session.get('doctor_id') != None:
         return redirect(url_for('doctor_dashboard'))
     
-    return render_template('/user/login.html')
+    return render_template('user/login.html')
 
 @app.route('/patient/login/', methods=['POST', 'GET'])
 def user_login():
@@ -78,7 +78,7 @@ def user_login():
     if session.get('patient_id') != None:
         return redirect(url_for('patient_dashboard'))
     if request.method == 'GET':
-        return render_template('/user/patient_login.html', logform=logform)
+        return render_template('user/patient_login.html', logform=logform)
     else:
         if logform.validate_on_submit():
             email = logform.email.data
@@ -98,13 +98,13 @@ def user_login():
                 flash('This Email Address Is Incorrect', category='error')
                 return redirect(url_for('user_login'))
         else:
-            return render_template('/user/patient_login.html', logform=logform)
+            return render_template('user/patient_login.html', logform=logform)
 
 @app.route('/register/', methods=['POST', 'GET'])
 def user_register():
     regform = RegistrationForm()
     if request.method == 'GET':
-        return render_template('/user/register.html', regform=regform)
+        return render_template('user/register.html', regform=regform)
     else:
         if regform.validate_on_submit():
             email = regform.email.data
@@ -113,13 +113,13 @@ def user_register():
             existing_patient = Patient.query.filter_by(patient_email=email).first()
             if existing_patient:
                 flash('This email is already registered as a patient. Please use a different email or login.', category='error')
-                return render_template('/user/register.html', regform=regform)
+                return render_template('user/register.html', regform=regform)
             
             # Check if email already exists in doctor table
             existing_doctor = Doctor.query.filter_by(doctor_email=email).first()
             if existing_doctor:
                 flash('This email is already registered as a doctor. Please use a different email.', category='error')
-                return render_template('/user/register.html', regform=regform)
+                return render_template('user/register.html', regform=regform)
             
             # Proceed with registration
             first_name = regform.first_name.data
@@ -142,9 +142,9 @@ def user_register():
             except Exception as e:
                 db.session.rollback()
                 flash('Registration failed. Please try again.', category='error')
-                return render_template('/user/register.html', regform=regform)
+                return render_template('user/register.html', regform=regform)
         else:
-            return render_template('/user/register.html', regform=regform)
+            return render_template('user/register.html', regform=regform)
 
 #method 1 for logout
 # @app.get('/logout/')
@@ -281,7 +281,7 @@ def complete_profileform():
     if session.get('patient_id') != None:
         conform = CompleteProfileForm()
         if request.method == 'GET':
-            return render_template('/user/complete_form.html', conform=conform)
+            return render_template('user/complete_form.html', conform=conform)
         else:
             if conform.validate_on_submit():
 
@@ -298,7 +298,7 @@ def complete_profileform():
                 
                 if existing_phone:
                     flash('This phone number is already registered. Please use a different phone number.', category='error')
-                    return render_template('/user/complete_profileform.html', conform=conform)
+                    return render_template('user/complete_profileform.html', conform=conform)
                 
                 patient = db.session.query(Patient).get(session['patient_id'])
                 patient.phone_num = phone
@@ -309,7 +309,7 @@ def complete_profileform():
                 flash('Profile updated successfully! You can now book an appointment.', category='success')
                 return redirect(url_for('book_appointment'))
             else:
-                return render_template('/user/complete_profileform.html', conform=conform)
+                return render_template('user/complete_profileform.html', conform=conform)
     else:
         flash('You must be logged in to view this page',category='error')
         return redirect(url_for('user_login'))
@@ -445,7 +445,7 @@ def patient_appointments():
         appointments = Appointment.query.filter_by(
             patient_id=session["patient_id"]
         ).order_by(Appointment.updated_at.desc()).all()  # Changed to updated_at
-        return render_template('/user/patient_appointments.html', deets=deets, appointments=appointments)
+        return render_template('user/patient_appointments.html', deets=deets, appointments=appointments)
     else:
         flash('You must be logged in to view this page', category='error')
         return redirect(url_for('user_login'))

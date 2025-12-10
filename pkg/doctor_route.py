@@ -60,7 +60,7 @@ def doctor_login():
     if session.get('doctor_id') != None:
         return redirect(url_for('doctor_dashboard'))
     if request.method == 'GET':
-        return render_template('/doctors/doctor_login.html', docform=docform)
+        return render_template('doctors/doctor_login.html', docform=docform)
     else:
         if docform.validate_on_submit():
             email = docform.email.data
@@ -81,7 +81,7 @@ def doctor_login():
                 flash('No account found with that email.', 'error')
                 return redirect(url_for('doctor_login'))
         else:
-            return render_template('/doctors/doctor_login.html', docform=docform)
+            return render_template('doctors/doctor_login.html', docform=docform)
 
 @app.route('/doctor/register/', methods=['POST', 'GET'])
 def doctor_register():
@@ -90,7 +90,7 @@ def doctor_register():
     form.specialization.choices = [(str(s.specialty_id), s.specialty_name) for s in specialties]
 
     if request.method == 'GET':
-        return render_template('/doctors/doctor_register.html', form=form)
+        return render_template('doctors/doctor_register.html', form=form)
     else:
         if form.validate_on_submit():
             email = form.email.data
@@ -99,19 +99,19 @@ def doctor_register():
             existing_doctor = Doctor.query.filter_by(doctor_email=email).first()
             if existing_doctor:
                 flash('This email is already registered as a doctor. Please use a different email or login.', 'error')
-                return render_template('/doctors/doctor_register.html', form=form)
+                return render_template('doctors/doctor_register.html', form=form)
             
             # Check if email already exists in patient table
             existing_patient = Patient.query.filter_by(patient_email=email).first()
             if existing_patient:
                 flash('This email is already registered as a patient. Please use a different email.', 'error')
-                return render_template('/doctors/doctor_register.html', form=form)
+                return render_template('doctors/doctor_register.html', form=form)
             
             # Check if license number already exists
             existing_license = Doctor.query.filter_by(doctor_license=form.license_no.data).first()
             if existing_license:
                 flash('This license number is already registered. Please check your license number.', 'error')
-                return render_template('/doctors/doctor_register.html', form=form)
+                return render_template('doctors/doctor_register.html', form=form)
             
             try:
                 hashed_password = generate_password_hash(form.password.data)
@@ -147,9 +147,9 @@ def doctor_register():
             except Exception as e:
                 db.session.rollback()
                 flash('Registration failed. Please try again.', 'error')
-                return render_template('/doctors/doctor_register.html', form=form)
+                return render_template('doctors/doctor_register.html', form=form)
         else:
-            return render_template('/doctors/doctor_register.html', form=form)
+            return render_template('doctors/doctor_register.html', form=form)
 
 @app.route("/add_specialties/")
 def add_specialties():
