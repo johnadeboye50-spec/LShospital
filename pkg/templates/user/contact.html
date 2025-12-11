@@ -105,28 +105,18 @@
                         <p class="text-muted mb-4">Interested in this project or have questions? Fill out the form below
                             and I'll get back to you as soon as possible.</p>
 
-                        <form>
+                        <form action="https://formspree.io/f/xovgpqjp" method="POST">
                             <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-bold">Your Name</label>
-                                    <input type="text" class="form-control" placeholder="Enter your name" required>
-                                </div>
-
-                                <div class="col-md-6">
+                                <div class="col-12">
                                     <label class="form-label fw-bold">Your Email</label>
-                                    <input type="email" class="form-control" placeholder="your.email@example.com"
-                                        required>
+                                    <input type="email" name="email" class="form-control"
+                                        placeholder="your.email@example.com" required>
                                 </div>
 
                                 <div class="col-12">
-                                    <label class="form-label fw-bold">Subject</label>
-                                    <input type="text" class="form-control" placeholder="What is this about?" required>
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label fw-bold">Message</label>
-                                    <textarea class="form-control" rows="6" placeholder="Type your message here..."
-                                        required></textarea>
+                                    <label class="form-label fw-bold">Your Message</label>
+                                    <textarea name="message" class="form-control" rows="6"
+                                        placeholder="Type your message here..." required></textarea>
                                 </div>
 
                                 <div class="col-12">
