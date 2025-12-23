@@ -37,7 +37,7 @@ def upgrade():
     sa.Column('doctor_fname', sa.String(length=100), nullable=False),
     sa.Column('doctor_lname', sa.String(length=100), nullable=False),
     sa.Column('doctor_password', sa.String(length=255), nullable=False),
-    sa.Column('doctor_status', sa.Enum('active', 'inactive'), nullable=True),
+    sa.Column('doctor_status', sa.Enum('active', 'inactive', name='doctor_status_enum'), nullable=True),
     sa.Column('doctor_regdate', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('doctor_id')
     )
@@ -51,7 +51,7 @@ def upgrade():
     sa.Column('phone_num', sa.String(length=255), nullable=False),
     sa.Column('patient_dob', sa.DateTime(), nullable=True),
     sa.Column('patient_regdate', sa.DateTime(), nullable=True),
-    sa.Column('patient_gender', sa.Enum('male', 'female'), nullable=True),
+    sa.Column('patient_gender', sa.Enum('male', 'female', name='patient_gender_enum'), nullable=True),
     sa.PrimaryKeyConstraint('patient_id'),
     sa.UniqueConstraint('patient_email'),
     sa.UniqueConstraint('phone_num')
@@ -67,7 +67,7 @@ def upgrade():
     sa.Column('doctor_id', sa.Integer(), nullable=True),
     sa.Column('patient_note', sa.String(length=255), nullable=False),
     sa.Column('doctor_note', sa.Text(), nullable=False),
-    sa.Column('status', sa.Enum('active', 'inactive'), nullable=True),
+    sa.Column('status', sa.Enum('active', 'inactive', name='appointment_status_enum'), nullable=True),
     sa.Column('date', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['doctor_id'], ['doctor.doctor_id'], ),
     sa.ForeignKeyConstraint(['patient_id'], ['patient.patient_id'], ),
