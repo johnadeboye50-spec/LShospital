@@ -87,7 +87,7 @@ def upgrade():
     sa.Column('pay_amt', sa.Float(), nullable=True),
     sa.Column('pay_patientid', sa.Integer(), nullable=False),
     sa.Column('pay_ref', sa.String(length=100), nullable=True),
-    sa.Column('pay_status', sa.Enum('pending', 'failed', 'paid'), nullable=True),
+    sa.Column('pay_status', sa.Enum('pending', 'failed', 'paid', name='payment_status_enum'), nullable=True),
     sa.Column('pay_data', sa.JSON(), nullable=True),
     sa.Column('pay_date', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['pay_patientid'], ['appointment.app_id'], ),
