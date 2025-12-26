@@ -180,12 +180,13 @@ def doctor_dashboard():
         doctor = Doctor.query.options(joinedload(Doctor.specialty)).get(session['doctor_id'])
         
         if not doctor:
-            flash('Doctor account not found. Please login again.', 'error')
             session.pop('doctor_id', None)
+            flash('Doctor account not found. Please login again.', 'error')
             return redirect(url_for('doctor_login'))
         
         # Check if specialty exists
         if not doctor.specialty:
+            session.pop('doctor_id', None)
             flash('Your account has an invalid specialty. Please contact administrator.', 'error')
             return redirect(url_for('doctor_login'))
         
@@ -312,7 +313,8 @@ def doctor_dashboard():
         )
     except Exception as e:
         app.logger.error(f"Doctor dashboard error: {str(e)}")
-        flash(f'Error loading dashboard: {str(e)}', 'error')
+        session.pop('doctor_id', None)
+        flash(f'Error loading dashboard. Please login again.', 'error')
         return redirect(url_for('doctor_login'))
 
 @app.route('/doctors/filter', methods=['POST'])
