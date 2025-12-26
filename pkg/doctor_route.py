@@ -174,7 +174,19 @@ def add_specialties():
 @app.route('/doctor/dashboard/')
 @doctor_required
 def doctor_dashboard():
-    doctor = Doctor.query.get(session['doctor_id'])
+    # Use joinedload to eagerly load the specialty relationship
+    from sqlalchemy.orm import joinedload
+    doctor = Doctor.query.options(joinedload(Doctor.specialty)).get(session['doctor_id'])
+    
+    if not doctor:
+        flash('Doctor account not found. Please login again.', 'error')
+        session.pop('doctor_id', None)
+        return redirect(url_for('doctor_login'))
+    
+    # Check if specialty exists
+    if not doctor.specialty:
+        flash('Your account has an invalid specialty. Please contact administrator.', 'error')
+        return redirect(url_for('doctor_login'))
     
     # Get today's appointments (latest first, limit 4)
     today = date.today()
