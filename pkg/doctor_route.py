@@ -149,6 +149,11 @@ def doctor_register():
                 flash('Registration failed. Please try again.', 'error')
                 return render_template('doctors/doctor_register.html', form=form)
         else:
+            # Form validation failed - flash the errors
+            if form.errors:
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        flash(f'{field}: {error}', 'error')
             return render_template('doctors/doctor_register.html', form=form)
 
 @app.route("/add_specialties/")
@@ -312,9 +317,12 @@ def doctor_dashboard():
             activities=activities
         )
     except Exception as e:
-        app.logger.error(f"Doctor dashboard error: {str(e)}")
+        import traceback
+        error_msg = str(e)
+        tb = traceback.format_exc()
+        app.logger.error(f"Doctor dashboard error: {error_msg}\n{tb}")
         session.pop('doctor_id', None)
-        flash(f'Error loading dashboard. Please login again.', 'error')
+        flash(f'Dashboard error: {error_msg}', 'error')
         return redirect(url_for('doctor_login'))
 
 @app.route('/doctors/filter', methods=['POST'])
