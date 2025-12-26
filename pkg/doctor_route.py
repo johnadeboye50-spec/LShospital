@@ -1,5 +1,6 @@
 from datetime import date, datetime,timedelta
 import os, secrets
+from sqlalchemy.orm import joinedload
 from functools import wraps
 from flask import redirect, render_template, request, session,url_for,jsonify,flash
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -181,7 +182,6 @@ def add_specialties():
 def doctor_dashboard():
     try:
         # Use joinedload to eagerly load the specialty relationship
-        from sqlalchemy.orm import joinedload
         doctor = Doctor.query.options(joinedload(Doctor.specialty)).get(session['doctor_id'])
         
         if not doctor:
@@ -233,12 +233,12 @@ def doctor_dashboard():
         # Get recent patients
         recent_patients = db.session.query(Patient).join(Appointment).filter(
             Appointment.doctor_id == doctor.doctor_id
-        ).distinct().order_by(Appointment.created_at.desc()).limit(5).all()
+        ).order_by(Patient.patient_regdate.desc()).limit(5).all()
         
         # Get statistics
         total_patients = db.session.query(Patient).join(Appointment).filter(
             Appointment.doctor_id == doctor.doctor_id
-        ).distinct().count()
+        ).distinct(Patient.patient_id).count()
         
         total_appointments = Appointment.query.filter_by(doctor_id=doctor.doctor_id).count()
         
