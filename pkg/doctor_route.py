@@ -174,129 +174,146 @@ def add_specialties():
 @app.route('/doctor/dashboard/')
 @doctor_required
 def doctor_dashboard():
-    # Use joinedload to eagerly load the specialty relationship
-    from sqlalchemy.orm import joinedload
-    doctor = Doctor.query.options(joinedload(Doctor.specialty)).get(session['doctor_id'])
-    
-    if not doctor:
-        flash('Doctor account not found. Please login again.', 'error')
-        session.pop('doctor_id', None)
+    try:
+        # Use joinedload to eagerly load the specialty relationship
+        from sqlalchemy.orm import joinedload
+        doctor = Doctor.query.options(joinedload(Doctor.specialty)).get(session['doctor_id'])
+        
+        if not doctor:
+            flash('Doctor account not found. Please login again.', 'error')
+            session.pop('doctor_id', None)
+            return redirect(url_for('doctor_login'))
+        
+        # Check if specialty exists
+        if not doctor.specialty:
+            flash('Your account has an invalid specialty. Please contact administrator.', 'error')
+            return redirect(url_for('doctor_login'))
+        
+        # Get today's appointments (latest first, limit 4)
+        today = date.today()
+        todays_appointments = Appointment.query.filter(
+            Appointment.doctor_id == doctor.doctor_id,
+            Appointment.appointment_date == today
+        ).order_by(Appointment.created_at.desc()).limit(4).all()
+        
+        # Get appointments by status for quick stats
+        accepted_appointments = Appointment.query.filter(
+            Appointment.doctor_id == doctor.doctor_id,
+            Appointment.status == 'accepted'
+        ).count()
+        
+        declined_appointments = Appointment.query.filter(
+            Appointment.doctor_id == doctor.doctor_id,
+            Appointment.status == 'declined'
+        ).count()
+        
+        completed_appointments = Appointment.query.filter(
+            Appointment.doctor_id == doctor.doctor_id,
+            Appointment.status == 'completed'
+        ).count()
+        
+        # Get today's stats
+        todays_total = Appointment.query.filter(
+            Appointment.doctor_id == doctor.doctor_id,
+            Appointment.appointment_date == today
+        ).count()
+        
+        todays_completed = Appointment.query.filter(
+            Appointment.doctor_id == doctor.doctor_id,
+            Appointment.appointment_date == today,
+            Appointment.status == 'completed'
+        ).count()
+        
+        # Get recent patients
+        recent_patients = db.session.query(Patient).join(Appointment).filter(
+            Appointment.doctor_id == doctor.doctor_id
+        ).distinct().order_by(Appointment.created_at.desc()).limit(5).all()
+        
+        # Get statistics
+        total_patients = db.session.query(Patient).join(Appointment).filter(
+            Appointment.doctor_id == doctor.doctor_id
+        ).distinct().count()
+        
+        total_appointments = Appointment.query.filter_by(doctor_id=doctor.doctor_id).count()
+        
+        pending_appointments = Appointment.query.filter_by(
+            doctor_id=doctor.doctor_id,
+            status='pending'
+        ).count()
+        
+        completed_consultations = Consultation.query.join(Appointment).filter(
+            Appointment.doctor_id == doctor.doctor_id
+        ).count()
+        
+        # Recent activity (limit 4)
+        activities = []
+        
+        # Recent appointments
+        recent_appts = Appointment.query.filter_by(
+            doctor_id=doctor.doctor_id
+        ).order_by(Appointment.created_at.desc()).limit(3).all()
+        
+        for appt in recent_appts:
+            try:
+                if appt.patient:
+                    activities.append({
+                        'title': f'Appointment with {appt.patient.patient_fname} {appt.patient.patient_lname}',
+                        'description': f'{appt.status.capitalize()} - {appt.appointment_date.strftime("%b %d, %Y")}',
+                        'date': appt.created_at,
+                        'icon': 'patient',
+                        'pic': appt.patient.patient_profilepic
+                    })
+            except Exception as e:
+                app.logger.error(f"Error processing appointment {appt.app_id}: {str(e)}")
+                continue
+        
+        # Recent consultations
+        recent_consults = Consultation.query.join(Appointment).filter(
+            Appointment.doctor_id == doctor.doctor_id
+        ).order_by(Consultation.date.desc()).limit(2).all()
+        
+        for consult in recent_consults:
+            try:
+                if consult.appointment and consult.appointment.patient:
+                    activities.append({
+                        'title': f'Consultation completed',
+                        'description': f'Patient: {consult.appointment.patient.patient_fname} {consult.appointment.patient.patient_lname}',
+                        'date': consult.date,
+                        'icon': 'C',
+                        'pic': None
+                    })
+            except Exception as e:
+                app.logger.error(f"Error processing consultation {consult.cun_id}: {str(e)}")
+                continue
+        
+        # Sort activities by date and limit to 4
+        try:
+            activities.sort(key=lambda x: x['date'], reverse=True)
+        except Exception as e:
+            app.logger.error(f"Error sorting activities: {str(e)}")
+        
+        activities = activities[:4]
+        
+        return render_template(
+            'doctors/doctor_dashboard.html',
+            doctor=doctor,
+            todays_appointments=todays_appointments,
+            accepted_appointments=accepted_appointments,
+            declined_appointments=declined_appointments,
+            completed_appointments=completed_appointments,
+            todays_total=todays_total,
+            todays_completed=todays_completed,
+            recent_patients=recent_patients,
+            total_patients=total_patients,
+            total_appointments=total_appointments,
+            pending_appointments=pending_appointments,
+            completed_consultations=completed_consultations,
+            activities=activities
+        )
+    except Exception as e:
+        app.logger.error(f"Doctor dashboard error: {str(e)}")
+        flash(f'Error loading dashboard: {str(e)}', 'error')
         return redirect(url_for('doctor_login'))
-    
-    # Check if specialty exists
-    if not doctor.specialty:
-        flash('Your account has an invalid specialty. Please contact administrator.', 'error')
-        return redirect(url_for('doctor_login'))
-    
-    # Get today's appointments (latest first, limit 4)
-    today = date.today()
-    todays_appointments = Appointment.query.filter(
-        Appointment.doctor_id == doctor.doctor_id,
-        Appointment.appointment_date == today
-    ).order_by(Appointment.created_at.desc()).limit(4).all()
-    
-    # Get appointments by status for quick stats
-    accepted_appointments = Appointment.query.filter(
-        Appointment.doctor_id == doctor.doctor_id,
-        Appointment.status == 'accepted'
-    ).count()
-    
-    declined_appointments = Appointment.query.filter(
-        Appointment.doctor_id == doctor.doctor_id,
-        Appointment.status == 'declined'
-    ).count()
-    
-    completed_appointments = Appointment.query.filter(
-        Appointment.doctor_id == doctor.doctor_id,
-        Appointment.status == 'completed'
-    ).count()
-    
-    # Get today's stats
-    todays_total = Appointment.query.filter(
-        Appointment.doctor_id == doctor.doctor_id,
-        Appointment.appointment_date == today
-    ).count()
-    
-    todays_completed = Appointment.query.filter(
-        Appointment.doctor_id == doctor.doctor_id,
-        Appointment.appointment_date == today,
-        Appointment.status == 'completed'
-    ).count()
-    
-    # Get recent patients
-    recent_patients = db.session.query(Patient).join(Appointment).filter(
-        Appointment.doctor_id == doctor.doctor_id
-    ).distinct().order_by(Appointment.created_at.desc()).limit(5).all()
-    
-    # Get statistics
-    total_patients = db.session.query(Patient).join(Appointment).filter(
-        Appointment.doctor_id == doctor.doctor_id
-    ).distinct().count()
-    
-    total_appointments = Appointment.query.filter_by(doctor_id=doctor.doctor_id).count()
-    
-    pending_appointments = Appointment.query.filter_by(
-        doctor_id=doctor.doctor_id,
-        status='pending'
-    ).count()
-    
-    completed_consultations = Consultation.query.join(Appointment).filter(
-        Appointment.doctor_id == doctor.doctor_id
-    ).count()
-    
-    # Recent activity (limit 4)
-    activities = []
-    
-    # Recent appointments
-    recent_appts = Appointment.query.filter_by(
-        doctor_id=doctor.doctor_id
-    ).order_by(Appointment.created_at.desc()).limit(3).all()
-    
-    for appt in recent_appts:
-        if appt.patient:
-            activities.append({
-                'title': f'Appointment with {appt.patient.patient_fname} {appt.patient.patient_lname}',
-                'description': f'{appt.status.capitalize()} - {appt.appointment_date.strftime("%b %d, %Y")}',
-                'date': appt.created_at,
-                'icon': 'patient',
-                'pic': appt.patient.patient_profilepic
-            })
-    
-    # Recent consultations
-    recent_consults = Consultation.query.join(Appointment).filter(
-        Appointment.doctor_id == doctor.doctor_id
-    ).order_by(Consultation.date.desc()).limit(2).all()
-    
-    for consult in recent_consults:
-        if consult.appointment and consult.appointment.patient:
-            activities.append({
-                'title': f'Consultation completed',
-                'description': f'Patient: {consult.appointment.patient.patient_fname} {consult.appointment.patient.patient_lname}',
-                'date': consult.date,
-                'icon': 'C',
-                'pic': None
-            })
-    
-    # Sort activities by date and limit to 4
-    activities.sort(key=lambda x: x['date'], reverse=True)
-    activities = activities[:4]
-    
-    return render_template(
-        'doctors/doctor_dashboard.html',
-        doctor=doctor,
-        todays_appointments=todays_appointments,
-        accepted_appointments=accepted_appointments,
-        declined_appointments=declined_appointments,
-        completed_appointments=completed_appointments,
-        todays_total=todays_total,
-        todays_completed=todays_completed,
-        recent_patients=recent_patients,
-        total_patients=total_patients,
-        total_appointments=total_appointments,
-        pending_appointments=pending_appointments,
-        completed_consultations=completed_consultations,
-        activities=activities
-    )
 
 @app.route('/doctors/filter', methods=['POST'])
 def filter_doctors():
