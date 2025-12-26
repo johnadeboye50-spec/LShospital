@@ -366,6 +366,14 @@
 
     // Date Selection with Schedule Check
     document.getElementById('appointment-date').addEventListener('change', function () {
+        if (!selectedDoctor) {
+            const container = document.getElementById('time-slots-container');
+            container.innerHTML = '<p class="text-danger">Please select a doctor first.</p>';
+            this.value = this.value; // keep the chosen date
+            const continueBtn = document.getElementById('continue-to-step3');
+            continueBtn.disabled = true;
+            return;
+        }
         const date = new Date(this.value);
         const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
 
@@ -387,10 +395,24 @@
     function generateTimeSlots() {
         const container = document.getElementById('time-slots-container');
         container.innerHTML = '';
+        const continueBtn = document.getElementById('continue-to-step3');
+
+        // Validate working hours
+        if (!selectedDoctor.startTime || !selectedDoctor.endTime) {
+            container.innerHTML = '<p class="text-danger">Doctor working hours are not set.</p>';
+            if (continueBtn) continueBtn.disabled = true;
+            return;
+        }
 
         const start = selectedDoctor.startTime.split(':');
         const end = selectedDoctor.endTime.split(':');
-        const duration = selectedDoctor.duration;
+        const duration = selectedDoctor.duration || 30;
+
+        if (!start.length || !end.length || duration <= 0) {
+            container.innerHTML = '<p class="text-danger">No valid time slots available.</p>';
+            if (continueBtn) continueBtn.disabled = true;
+            return;
+        }
 
         let currentTime = new Date();
         currentTime.setHours(parseInt(start[0]), parseInt(start[1]), 0);
@@ -424,6 +446,7 @@
         }
 
         document.getElementById('date-info').textContent = `Available slots for ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`;
+        if (continueBtn) continueBtn.disabled = true;
     }
 
     // Update Summary Sidebar
