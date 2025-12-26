@@ -321,15 +321,6 @@
                 return;
             }
 
-            // Check if doctor is available today
-            const today = new Date();
-            const todayName = today.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-
-            if (!schedule[todayName]) {
-                alert(`⚠️ Doctor is not available today (${todayName.charAt(0).toUpperCase() + todayName.slice(1)}). Please choose another doctor.`);
-                return;
-            }
-
             selectedDoctor = {
                 id: doctorId,
                 name: this.dataset.doctorName,
@@ -355,14 +346,18 @@
             updateSummary();
             setTimeout(() => {
                 goToStep(2);
-                // Only generate if doctor is available on the selected date's weekday
+                // Generate slots if available on selected date; otherwise show message
                 const date = new Date(selectedDate);
                 const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+                const container = document.getElementById('time-slots-container');
+                const continueBtn = document.getElementById('continue-to-step3');
+                selectedTime = null;
                 if (selectedDoctor.schedule[dayName]) {
                     generateTimeSlots();
+                    continueBtn.disabled = true;
                 } else {
-                    const container = document.getElementById('time-slots-container');
-                    container.innerHTML = '<p class="text-danger">Doctor is not available today.</p>';
+                    container.innerHTML = '<p class="text-danger">Doctor is not available on the selected date.</p>';
+                    continueBtn.disabled = true;
                 }
                 updateSummary();
             }, 300);
@@ -374,14 +369,17 @@
         const date = new Date(this.value);
         const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
 
-        if (!selectedDoctor.schedule[dayName]) {
-            alert(`Doctor is not available on ${dayName}s. Please select another date.`);
-            this.value = '';
-            return;
-        }
-
+        const continueBtn = document.getElementById('continue-to-step3');
         selectedDate = this.value;
-        generateTimeSlots();
+        selectedTime = null;
+        if (!selectedDoctor.schedule[dayName]) {
+            const container = document.getElementById('time-slots-container');
+            container.innerHTML = '<p class="text-danger">Doctor is not available on the selected date.</p>';
+            continueBtn.disabled = true;
+        } else {
+            generateTimeSlots();
+            continueBtn.disabled = true;
+        }
         updateSummary();
     });
 
@@ -416,6 +414,8 @@
                 document.querySelectorAll('.time-slot-btn').forEach(b => b.classList.add('btn-outline-primary'));
                 this.classList.remove('btn-outline-primary');
                 this.classList.add('btn-primary');
+                const continueBtn = document.getElementById('continue-to-step3');
+                continueBtn.disabled = false;
                 updateSummary();
             });
 
@@ -519,6 +519,9 @@
     dateInput.min = '{{ current_date }}';
     // Pre-populate selectedDate to today's date so backend receives it
     selectedDate = dateInput.value;
+    // Disable continue until a time is chosen
+    const continueBtnInit = document.getElementById('continue-to-step3');
+    if (continueBtnInit) continueBtnInit.disabled = true;
     // If a doctor card is pre-selected (e.g., via state), generate slots
     // This keeps behavior consistent when returning to the page
     if (selectedDoctor && selectedDate) {
@@ -527,6 +530,19 @@
         if (selectedDoctor.schedule && selectedDoctor.schedule[dayName]) {
             generateTimeSlots();
         }
+    }
+
+    // Prevent continuing to step 3 without date & time
+    const continueBtn = document.getElementById('continue-to-step3');
+    if (continueBtn) {
+        continueBtn.addEventListener('click', function (e) {
+            if (!selectedDate || !selectedTime) {
+                e.preventDefault();
+                alert('Please choose a date and time slot before continuing.');
+                return false;
+            }
+            goToStep(3);
+        });
     }
 </script>
 

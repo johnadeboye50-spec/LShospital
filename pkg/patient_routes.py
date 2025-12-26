@@ -361,7 +361,7 @@ def book_appointment():
             flash("⚠️ This doctor has not set a schedule.", "warning")
             return redirect(url_for("book_appointment"))
 
-        # Check that the selected date is today and doctor is available today
+        # Validate selected date and map availability using selected date
         try:
             sel_date = datetime.strptime(appointment_date, "%Y-%m-%d").date()
             today_date = date.today()
@@ -369,13 +369,13 @@ def book_appointment():
             flash("❗ Invalid date format.", "danger")
             return redirect(url_for("book_appointment"))
 
-        # Only allow booking for today
-        if sel_date != today_date:
-            flash("⚠️ You can only book for today. Please select today's date.", "warning")
+        # Allow booking today or future dates only
+        if sel_date < today_date:
+            flash("⚠️ Please select today or a future date.", "warning")
             return redirect(url_for("book_appointment"))
 
-        # Check doctor's day availability
-        weekday = today_date.strftime('%A').lower()  # e.g., 'monday'
+        # Check doctor's day availability based on selected date's weekday
+        weekday = sel_date.strftime('%A').lower()  # e.g., 'monday'
         day_map = {
             'monday': schedule.monday,
             'tuesday': schedule.tuesday,
@@ -386,8 +386,20 @@ def book_appointment():
             'sunday': schedule.sunday,
         }
         if not day_map.get(weekday):
-            flash(f"⚠️ Doctor is not available today ({weekday}).", "warning")
+            flash(f"⚠️ Doctor is not available on {weekday}s.", "warning")
             return redirect(url_for("book_appointment"))
+
+        # Validate time is within doctor's working hours
+        try:
+            sel_time = datetime.strptime(appointment_time, "%H:%M").time()
+        except Exception:
+            flash("❗ Invalid time format.", "danger")
+            return redirect(url_for("book_appointment"))
+
+        if schedule.start_time and schedule.end_time:
+            if not (schedule.start_time <= sel_time < schedule.end_time):
+                flash("❗ Selected time is outside the doctor's working hours.", "danger")
+                return redirect(url_for("book_appointment"))
 
         # Enforce slot capacity: max_appointments_per_slot
         existing_count = Appointment.query.filter_by(
