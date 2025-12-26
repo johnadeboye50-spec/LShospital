@@ -241,13 +241,14 @@ def doctor_dashboard():
     ).order_by(Appointment.created_at.desc()).limit(3).all()
     
     for appt in recent_appts:
-        activities.append({
-            'title': f'Appointment with {appt.patient.patient_fname} {appt.patient.patient_lname}',
-            'description': f'{appt.status.capitalize()} - {appt.appointment_date.strftime("%b %d, %Y")}',
-            'date': appt.created_at,
-            'icon': 'patient',
-            'pic': appt.patient.patient_profilepic
-        })
+        if appt.patient:
+            activities.append({
+                'title': f'Appointment with {appt.patient.patient_fname} {appt.patient.patient_lname}',
+                'description': f'{appt.status.capitalize()} - {appt.appointment_date.strftime("%b %d, %Y")}',
+                'date': appt.created_at,
+                'icon': 'patient',
+                'pic': appt.patient.patient_profilepic
+            })
     
     # Recent consultations
     recent_consults = Consultation.query.join(Appointment).filter(
@@ -255,13 +256,14 @@ def doctor_dashboard():
     ).order_by(Consultation.date.desc()).limit(2).all()
     
     for consult in recent_consults:
-        activities.append({
-            'title': f'Consultation completed',
-            'description': f'Patient: {consult.appointment.patient.patient_fname} {consult.appointment.patient.patient_lname}',
-            'date': consult.date,
-            'icon': 'C',
-            'pic': None
-        })
+        if consult.appointment and consult.appointment.patient:
+            activities.append({
+                'title': f'Consultation completed',
+                'description': f'Patient: {consult.appointment.patient.patient_fname} {consult.appointment.patient.patient_lname}',
+                'date': consult.date,
+                'icon': 'C',
+                'pic': None
+            })
     
     # Sort activities by date and limit to 4
     activities.sort(key=lambda x: x['date'], reverse=True)
