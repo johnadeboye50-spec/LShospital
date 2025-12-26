@@ -24,7 +24,7 @@ class Patient(db.Model):
     patient_profilepic = db.Column(db.String(255), nullable=True)
     patient_dob = db.Column(db.Date)
     patient_regdate = db.Column(db.DateTime, default=datetime.utcnow)
-    patient_gender = db.Column(db.Enum('male', 'female'))
+    patient_gender = db.Column(db.Enum('male', 'female', name='patient_gender_enum'))
 
     appointments = db.relationship('Appointment', backref='patient',lazy=True)
     payment = db.relationship('Payment', backref='patient',lazy=True)
@@ -44,8 +44,8 @@ class Doctor(db.Model):
     doctor_profilepic = db.Column(db.String(255), nullable=True)
     doctor_password = db.Column(db.String(255), nullable=False)
     doctor_address = db.Column(db.String(255),nullable=True)
-    doctor_gender = db.Column(db.Enum('male', 'female'))
-    doctor_status = db.Column(db.Enum('active', 'inactive'), default='active')
+    doctor_gender = db.Column(db.Enum('male', 'female', name='doctor_gender_enum'))
+    doctor_status = db.Column(db.Enum('active', 'inactive', name='doctor_status_enum'), default='active')
     doctor_regdate = db.Column(db.DateTime, default=datetime.utcnow)
 
 
@@ -88,7 +88,7 @@ class Appointment(db.Model):
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.doctor_id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     patient_note = db.Column(db.String(255), nullable=True) 
     doctor_note = db.Column(db.Text, nullable=True)
-    status = db.Column(db.Enum('pending', 'accepted', 'declined', 'cancelled', 'completed'), default='pending')
+    status = db.Column(db.Enum('pending', 'accepted', 'declined', 'cancelled', 'completed', name='appointment_status_enum'), default='pending')
     appointment_date = db.Column(db.Date, nullable=False)
     appointment_time = db.Column(db.Time, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -133,8 +133,8 @@ class Payment(db.Model):
     pay_patientid = db.Column(db.Integer, db.ForeignKey('patient.patient_id',ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     cun_id = db.Column(db.Integer, db.ForeignKey('consultaion.cun_id',ondelete='CASCADE', onupdate='CASCADE'), nullable=True)
     pay_ref = db.Column(db.String(100), unique=True)
-    pay_method = db.Column(db.Enum('cash', 'transfer'), default='transfer')
-    pay_status = db.Column(db.Enum('pending', 'failed', 'paid'), default='pending')
+    pay_method = db.Column(db.Enum('cash', 'transfer', name='payment_method_enum'), default='transfer')
+    pay_status = db.Column(db.Enum('pending', 'failed', 'paid', name='payment_status_enum'), default='pending')
     pay_data = db.Column(db.JSON)
     pay_date = db.Column(db.DateTime, default=datetime.utcnow)
     
