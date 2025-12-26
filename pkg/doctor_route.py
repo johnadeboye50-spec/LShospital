@@ -268,7 +268,7 @@ def doctor_dashboard():
     activities = activities[:4]
     
     return render_template(
-        '/doctors/doctor_dashboard.html',
+        'doctors/doctor_dashboard.html',
         doctor=doctor,
         todays_appointments=todays_appointments,
         accepted_appointments=accepted_appointments,
