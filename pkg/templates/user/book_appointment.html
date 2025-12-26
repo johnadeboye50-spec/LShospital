@@ -297,6 +297,17 @@
     let selectedTime = null;
     let currentStep = 1;
 
+    // Parse YYYY-MM-DD into a local Date (avoid timezone shift)
+    function parseLocalDate(dateStr) {
+        if (!dateStr) return new Date();
+        const parts = dateStr.split('-');
+        if (parts.length !== 3) return new Date(dateStr);
+        const y = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10) - 1; // month is 0-indexed
+        const d = parseInt(parts[2], 10);
+        return new Date(y, m, d);
+    }
+
     // Step Navigation
     function goToStep(step) {
         document.getElementById(`step${currentStep}`).style.display = 'none';
@@ -347,7 +358,7 @@
             setTimeout(() => {
                 goToStep(2);
                 // Generate slots if available on selected date; otherwise show message
-                const date = new Date(selectedDate);
+                const date = parseLocalDate(selectedDate);
                 const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
                 const container = document.getElementById('time-slots-container');
                 const continueBtn = document.getElementById('continue-to-step3');
@@ -374,7 +385,7 @@
             continueBtn.disabled = true;
             return;
         }
-        const date = new Date(this.value);
+        const date = parseLocalDate(this.value);
         const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
 
         const continueBtn = document.getElementById('continue-to-step3');
@@ -445,7 +456,8 @@
             currentTime.setMinutes(currentTime.getMinutes() + duration);
         }
 
-        document.getElementById('date-info').textContent = `Available slots for ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`;
+        const infoDate = parseLocalDate(selectedDate);
+        document.getElementById('date-info').textContent = `Available slots for ${infoDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`;
         if (continueBtn) continueBtn.disabled = true;
     }
 
@@ -465,7 +477,7 @@
                 `;
 
             if (selectedDate) {
-                const dateObj = new Date(selectedDate);
+                const dateObj = parseLocalDate(selectedDate);
                 html += `
                         <div class="mb-3">
                             <small class="text-muted d-block mb-1">Date</small>
@@ -548,7 +560,7 @@
     // If a doctor card is pre-selected (e.g., via state), generate slots
     // This keeps behavior consistent when returning to the page
     if (selectedDoctor && selectedDate) {
-        const date = new Date(selectedDate);
+        const date = parseLocalDate(selectedDate);
         const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
         if (selectedDoctor.schedule && selectedDoctor.schedule[dayName]) {
             generateTimeSlots();
