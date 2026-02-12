@@ -1,6 +1,7 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from functools import wraps
-import secrets, os, requests, json
+import secrets, os, requests, json, smtplib
+from email.message import EmailMessage
 from werkzeug.utils import secure_filename
 from flask import redirect, render_template, request, session,url_for,jsonify,flash
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -8,6 +9,57 @@ from pkg import app
 from pkg.forms import LoginForm, RegistrationForm,CompleteProfileForm,PatientSettingsForm
 from pkg.models import db,Doctor,Patient,Payment,Consultation,Specialty,Appointment,DoctorSchedule
 from markupsafe import escape
+
+
+def generate_email_token():
+    return secrets.token_urlsafe(32)
+
+
+def send_email(to_email, subject, body):
+    host = os.environ.get("SMTP_HOST")
+    port = int(os.environ.get("SMTP_PORT", "587"))
+    user = os.environ.get("SMTP_USER")
+    password = os.environ.get("SMTP_PASSWORD")
+    sender = os.environ.get("SMTP_FROM") or user
+    use_tls = os.environ.get("SMTP_USE_TLS", "true").lower() == "true"
+
+    if not host or not user or not password or not sender:
+        app.logger.warning("SMTP not configured. Email not sent.")
+        return False
+
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = sender
+    msg["To"] = to_email
+    msg.set_content(body)
+
+    try:
+        with smtplib.SMTP(host, port) as server:
+            if use_tls:
+                server.starttls()
+            server.login(user, password)
+            server.send_message(msg)
+        return True
+    except Exception as exc:
+        app.logger.error(f"Email send failed: {exc}")
+        return False
+
+
+def send_verification_email(patient):
+    token = generate_email_token()
+    patient.email_verification_token = token
+    patient.email_verification_expires_at = datetime.utcnow() + timedelta(hours=24)
+    db.session.commit()
+
+    verify_link = url_for("verify_patient_email", token=token, _external=True)
+    body = (
+        "Welcome to LS Hospital.\n\n"
+        "Please verify your email address by clicking the link below:\n"
+        f"{verify_link}\n\n"
+        "This link expires in 24 hours."
+    )
+
+    return send_email(patient.patient_email, "Verify your email", body)
 
 @app.after_request
 def after_request(response):
@@ -89,6 +141,9 @@ def user_login():
                 userid = record.patient_id
                 chk = check_password_hash(stored_hash, password)
                 if chk == True:
+                    if not record.email_verified:
+                        flash("Please verify your email before logging in.", category='error')
+                        return redirect(url_for('resend_patient_verification', email=record.patient_email))
                     session['patient_id'] = userid
                     return redirect(url_for('patient_dashboard'))
                 else:
@@ -131,13 +186,18 @@ def user_register():
                 patient_fname=first_name,
                 patient_lname=last_name,
                 patient_email=email,
-                patient_password=to_bestored
+                patient_password=to_bestored,
+                email_verified=False
             )
             
             try:
                 db.session.add(patient)
                 db.session.commit()
-                flash('Registration Successful. Please log in.', category='success')
+                send_ok = send_verification_email(patient)
+                if send_ok:
+                    flash('Registration successful. Please check your email to verify your account.', category='success')
+                else:
+                    flash('Registration successful, but email could not be sent. Please contact support.', category='warning')
                 return redirect(url_for('user_login'))
             except Exception as e:
                 db.session.rollback()
@@ -163,6 +223,64 @@ def user_logout():
     session.pop('doctor_id', None)
 
     return redirect(url_for('home'))
+
+
+@app.get('/patient/verify-email/<token>')
+def verify_patient_email(token):
+    if not token:
+        flash('Invalid verification link.', category='error')
+        return redirect(url_for('user_login'))
+
+    patient = Patient.query.filter_by(email_verification_token=token).first()
+    if not patient:
+        flash('Verification link is invalid or expired.', category='error')
+        return redirect(url_for('user_login'))
+
+    if patient.email_verified:
+        flash('Email already verified. Please log in.', category='info')
+        return redirect(url_for('user_login'))
+
+    if patient.email_verification_expires_at and patient.email_verification_expires_at < datetime.utcnow():
+        flash('Verification link expired. Please request a new one.', category='warning')
+        return redirect(url_for('resend_patient_verification', email=patient.patient_email))
+
+    patient.email_verified = True
+    patient.email_verified_at = datetime.utcnow()
+    patient.email_verification_token = None
+    patient.email_verification_expires_at = None
+    db.session.commit()
+
+    flash('Email verified successfully. You can now log in.', category='success')
+    return redirect(url_for('user_login'))
+
+
+@app.route('/patient/resend-verification', methods=['GET', 'POST'])
+def resend_patient_verification():
+    if request.method == 'GET':
+        email = (request.args.get('email') or '').strip()
+    else:
+        email = (request.form.get('email') or '').strip()
+
+    if not email:
+        flash('Please provide your email address.', category='error')
+        return redirect(url_for('user_login'))
+
+    patient = Patient.query.filter_by(patient_email=email).first()
+    if not patient:
+        flash('No patient account found with that email.', category='error')
+        return redirect(url_for('user_login'))
+
+    if patient.email_verified:
+        flash('Email already verified. Please log in.', category='info')
+        return redirect(url_for('user_login'))
+
+    send_ok = send_verification_email(patient)
+    if send_ok:
+        flash('Verification email sent. Please check your inbox.', category='success')
+    else:
+        flash('Email could not be sent. Please contact support.', category='warning')
+
+    return redirect(url_for('user_login'))
 
 
     

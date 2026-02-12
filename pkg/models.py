@@ -25,6 +25,10 @@ class Patient(db.Model):
     patient_dob = db.Column(db.Date)
     patient_regdate = db.Column(db.DateTime, default=datetime.utcnow)
     patient_gender = db.Column(db.Enum('male', 'female', name='patient_gender_enum'))
+    email_verified = db.Column(db.Boolean, default=False)
+    email_verified_at = db.Column(db.DateTime, nullable=True)
+    email_verification_token = db.Column(db.String(255), nullable=True)
+    email_verification_expires_at = db.Column(db.DateTime, nullable=True)
 
     appointments = db.relationship('Appointment', backref='patient',lazy=True)
     payment = db.relationship('Payment', backref='patient',lazy=True)
