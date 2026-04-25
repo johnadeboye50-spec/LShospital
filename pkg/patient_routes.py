@@ -1,48 +1,14 @@
 from datetime import date, datetime, timedelta
 from functools import wraps
-import secrets, os, requests, json, smtplib
-from email.message import EmailMessage
+import os, requests, json
 from werkzeug.utils import secure_filename
 from flask import redirect, render_template, request, session,url_for,jsonify,flash
 from werkzeug.security import generate_password_hash,check_password_hash
 from pkg import app
 from pkg.forms import LoginForm, RegistrationForm,CompleteProfileForm,PatientSettingsForm
 from pkg.models import db,Doctor,Patient,Payment,Consultation,Specialty,Appointment,DoctorSchedule
+from pkg.auth_utils import generate_email_token, send_email, send_verification_message
 from markupsafe import escape
-
-
-def generate_email_token():
-    return secrets.token_urlsafe(32)
-
-
-def send_email(to_email, subject, body):
-    host = os.environ.get("SMTP_HOST")
-    port = int(os.environ.get("SMTP_PORT", "587"))
-    user = os.environ.get("SMTP_USER")
-    password = os.environ.get("SMTP_PASSWORD")
-    sender = os.environ.get("SMTP_FROM") or user
-    use_tls = os.environ.get("SMTP_USE_TLS", "true").lower() == "true"
-
-    if not host or not user or not password or not sender:
-        app.logger.warning("SMTP not configured. Email not sent.")
-        return False
-
-    msg = EmailMessage()
-    msg["Subject"] = subject
-    msg["From"] = sender
-    msg["To"] = to_email
-    msg.set_content(body)
-
-    try:
-        with smtplib.SMTP(host, port) as server:
-            if use_tls:
-                server.starttls()
-            server.login(user, password)
-            server.send_message(msg)
-        return True
-    except Exception as exc:
-        app.logger.error(f"Email send failed: {exc}")
-        return False
 
 
 def send_verification_email(patient):
@@ -52,14 +18,7 @@ def send_verification_email(patient):
     db.session.commit()
 
     verify_link = url_for("verify_patient_email", token=token, _external=True)
-    body = (
-        "Welcome to LS Hospital.\n\n"
-        "Please verify your email address by clicking the link below:\n"
-        f"{verify_link}\n\n"
-        "This link expires in 24 hours."
-    )
-
-    return send_email(patient.patient_email, "Verify your email", body)
+    return send_verification_message(patient.patient_email, verify_link)
 
 @app.after_request
 def after_request(response):
