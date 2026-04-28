@@ -1,6 +1,7 @@
 from datetime import date, datetime, timedelta
 from functools import wraps
-import os, requests, json
+import secrets, os, requests, json, smtplib
+from email.message import EmailMessage
 from werkzeug.utils import secure_filename
 from flask import redirect, render_template, request, session,url_for,jsonify,flash
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -12,13 +13,14 @@ from markupsafe import escape
 
 
 def send_verification_email(patient):
+    """Send verification email to patient using auth_utils."""
     token = generate_email_token()
     patient.email_verification_token = token
     patient.email_verification_expires_at = datetime.utcnow() + timedelta(hours=24)
     db.session.commit()
 
     verify_link = url_for("verify_patient_email", token=token, _external=True)
-    return send_verification_message(patient.patient_email, verify_link)
+    return send_verification_message(patient.patient_email, verify_link, expiry_hours=24)
 
 @app.after_request
 def after_request(response):

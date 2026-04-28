@@ -51,6 +51,10 @@ class Doctor(db.Model):
     doctor_gender = db.Column(db.Enum('male', 'female', name='doctor_gender_enum'))
     doctor_status = db.Column(db.Enum('active', 'inactive', name='doctor_status_enum'), default='active')
     doctor_regdate = db.Column(db.DateTime, default=datetime.utcnow)
+    email_verified = db.Column(db.Boolean, default=False)
+    email_verified_at = db.Column(db.DateTime, nullable=True)
+    email_verification_token = db.Column(db.String(255), nullable=True)
+    email_verification_expires_at = db.Column(db.DateTime, nullable=True)
 
 
     appointments = db.relationship('Appointment', backref='doctor', lazy=True)
