@@ -5,11 +5,17 @@ class GeneralConfig:
     SQLALCHEMY_TRACK_MODIFICATIONS=False
 
 class TestingConfig(GeneralConfig):
-    SQLALCHEMY_DATABASE_URI="mysql+mysqlconnector://root@localhost/hospital"
+    SQLALCHEMY_DATABASE_URI = (
+        "mysql+mysqlconnector://root:Johnperry144@localhost:3307/lshospital_db"
+    )
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class DevelopmentConfig(GeneralConfig):
-    SQLALCHEMY_DATABASE_URI="mysql+mysqlconnector://root@localhost/hospital"
-
+    SQLALCHEMY_DATABASE_URI = (
+        "mysql+mysqlconnector://root:Johnperry144@localhost:3307/lshospital_db"
+    )
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
 class LiveConfig(GeneralConfig):
     uri = os.environ.get("DATABASE_URL", "sqlite:///local.db")
 

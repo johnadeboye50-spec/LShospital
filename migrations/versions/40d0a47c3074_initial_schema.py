@@ -1,8 +1,8 @@
-"""initial schema for postgres
+"""initial schema
 
-Revision ID: 342aacc74311
+Revision ID: 40d0a47c3074
 Revises: 
-Create Date: 2025-12-26 16:52:27.008319
+Create Date: 2026-05-31 16:33:47.145415
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '342aacc74311'
+revision = '40d0a47c3074'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -43,6 +43,10 @@ def upgrade():
     sa.Column('patient_dob', sa.Date(), nullable=True),
     sa.Column('patient_regdate', sa.DateTime(), nullable=True),
     sa.Column('patient_gender', sa.Enum('male', 'female', name='patient_gender_enum'), nullable=True),
+    sa.Column('email_verified', sa.Boolean(), nullable=True),
+    sa.Column('email_verified_at', sa.DateTime(), nullable=True),
+    sa.Column('email_verification_token', sa.String(length=255), nullable=True),
+    sa.Column('email_verification_expires_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('patient_id'),
     sa.UniqueConstraint('patient_email'),
     sa.UniqueConstraint('phone_num')
@@ -69,6 +73,10 @@ def upgrade():
     sa.Column('doctor_gender', sa.Enum('male', 'female', name='doctor_gender_enum'), nullable=True),
     sa.Column('doctor_status', sa.Enum('active', 'inactive', name='doctor_status_enum'), nullable=True),
     sa.Column('doctor_regdate', sa.DateTime(), nullable=True),
+    sa.Column('email_verified', sa.Boolean(), nullable=True),
+    sa.Column('email_verified_at', sa.DateTime(), nullable=True),
+    sa.Column('email_verification_token', sa.String(length=255), nullable=True),
+    sa.Column('email_verification_expires_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['department_id'], ['department.department_id'], onupdate='CASCADE', ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['specialty_id'], ['specialty.specialty_id'], onupdate='CASCADE', ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('doctor_id'),
