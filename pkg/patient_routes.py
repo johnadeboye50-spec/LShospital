@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 from pkg import app
 from pkg.forms import LoginForm, RegistrationForm,CompleteProfileForm,PatientSettingsForm
 from pkg.models import db,Doctor,Patient,Payment,Consultation,Specialty,Appointment,DoctorSchedule
-from pkg.auth_utils import generate_email_token, send_email, send_verification_message
+from pkg.auth_utils import generate_email_token, send_email, send_verification_message, send_password_reset_message
 from markupsafe import escape
 
 
@@ -165,6 +165,11 @@ def user_register():
                 flash('Registration failed. Please try again.', category='error')
                 return render_template('user/register.html', regform=regform)
         else:
+            # If validation failed, surface errors to the user so they know why
+            if regform.errors:
+                for field, errors in regform.errors.items():
+                    for error in errors:
+                        flash(f"{field}: {error}", category='error')
             return render_template('user/register.html', regform=regform)
 
 #method 1 for logout
@@ -198,7 +203,7 @@ def verify_patient_email(token):
         return redirect(url_for('user_login'))
 
     if patient.email_verified:
-        flash('Email already verified. Please log in.', category='info')
+        flash('Email already verified. Please login.', category='info')
         return redirect(url_for('user_login'))
 
     if patient.email_verification_expires_at and patient.email_verification_expires_at < datetime.utcnow():

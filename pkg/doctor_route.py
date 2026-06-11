@@ -5,6 +5,7 @@ from functools import wraps
 from flask import redirect, render_template, request, session,url_for,jsonify,flash
 from werkzeug.security import generate_password_hash,check_password_hash
 from pkg import app
+from pkg.auth_utils import generate_email_token, send_verification_message, send_password_reset_message, send_email 
 from pkg.forms import DoctorForm, DoctorLoginForm, DoctorSettingsForm
 from pkg.models import db,Doctor,Department,Patient,Payment,Consultation,Specialty,Admin,Appointment,DoctorSchedule
 from markupsafe import escape
@@ -18,6 +19,15 @@ def doctor_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def send_verification_email(doctor):
+    #send email verification link to doctor
+    token = generate_email_token()
+    doctor.email_verification_token = token
+    doctor.email_verification_expires_at = datetime.utcnow() + timedelta(hours=24)
+    db.session.commit()
+
+    verify_link = url_for('verify_doctor_email', token=token, _external=True)
+    return send_verification_message(doctor.doctor_email, verify_link, expiry_hours=24)
 
 @app.get('/doctors/')
 def doctors_page():
@@ -72,6 +82,9 @@ def doctor_login():
                 doctorid = record.doctor_id
                 chk = check_password_hash(stored_hash, password)
                 if chk == True:
+                    if not record.email_verified:
+                        flash('Please verify your email before logging in.', category='error')
+                        return redirect(url_for('resend_doctor_verification', email=record.doctor_email))
                     session['doctor_id'] = doctorid
                     flash('Login successful!', 'success')
                     return redirect(url_for('doctor_dashboard'))
@@ -127,7 +140,8 @@ def doctor_register():
                     doctor_bio=form.bio.data,
                     doctor_gender=form.doctor_gender.data,
                     doctor_password=hashed_password,
-                    doctor_profilepic="default_doc.png"
+                    doctor_profilepic="default_doc.png",
+                    email_verified=False
                 )
                 
                 pix = form.profile_pic.data
@@ -143,7 +157,13 @@ def doctor_register():
                 
                 db.session.add(new_doctor)
                 db.session.commit()
-                flash('Doctor account created successfully!', 'success')
+
+                send_okay = send_verification_email(new_doctor)
+                if send_okay:
+                    flash('Registration successful. Please check your email to verify your account.', 'success')
+                else:
+                    flash('Registration successful, but email could not be sent. Please contact support.', 'warning')
+
                 return redirect(url_for('doctor_login'))
             except Exception as e:
                 db.session.rollback()
@@ -156,26 +176,85 @@ def doctor_register():
                     for error in errors:
                         flash(f'{field}: {error}', 'error')
             return render_template('doctors/doctor_register.html', form=form)
+        
 
-@app.route("/add_specialties/")
-def add_specialties():
-    specialties = [
-        "Cardiology",
-        "Neurology",
-        "Pediatrics",
-        "Dermatology",
-        "General Surgery",
-        "Family Medicine",
-        "Orthopedics",
-        "Gastroenterology"
-    ]
-
-    for name in specialties:
-        sp = Specialty(specialty_name=name)
-        db.session.add(sp)
-
+@app.get('/doctor/verify-email/<token>/')
+def verify_doctor_email(token):
+    if not token:
+        flash('Invalid verification link.', category='error')
+        return redirect(url_for('doctor_login'))
+    
+    doctor = Doctor.query.filter_by(email_verification_token=token).first()
+    if not doctor:
+        flash('Verification link is invalid or expired.', category='error')
+        return redirect(url_for('doctor_login'))
+    
+    if doctor.email_verified:
+        flash('Email already verified. Please login.', category='info')
+        return redirect(url_for('doctor_login'))
+    
+    if doctor.email_verification_expires_at and doctor.email_verification_expires_at < datetime.utcnow():
+        flash('Verification link has expired. Please request a new verification email.', category='error')
+        return redirect(url_for('resend_doctor_verification', email=doctor.doctor_email))
+    
+    doctor.email_verified = True
+    doctor.email_verified_at = datetime.utcnow()
+    doctor.email_verification_token = None
+    doctor.email_verification_expires_at = None
     db.session.commit()
-    return "Specialties added!"
+
+    flash('Email verified successfully! you can now log in.', category='success')
+    return redirect(url_for('doctor_login'))
+
+
+
+
+@app.route('/doctor/resend-verification/', methods=['GET', 'POST'])
+def resend_doctor_verification():
+    if request.method == 'GET':
+        email = request.args.get('email', '').strip()
+    else:
+        email = request.form.get('email', '').strip()
+
+    if not email:
+        flash('Please provide your email address.', category='error')
+        return redirect(url_for('doctor_login'))
+    doctor = Doctor.query.filter_by(doctor_email=email).first()
+    if not doctor:
+        flash('No doctor account found with this email.', category='error')
+        return redirect(url_for('doctor_login'))
+    if doctor.email_verified:
+        flash('Email already verified. Please login.', category='info')
+        return redirect(url_for('doctor_login'))
+    send_ok = send_verification_email(doctor)
+    if send_ok:
+        flash('Verification email sent! Please check your inbox.', category='success')
+    else:
+        flash('Email could not be sent. Please contact support.', category='error')
+
+    return redirect(url_for('doctor_login'))
+
+
+
+# @app.route("/add_specialties/")
+# def add_specialties():
+#     specialties = [
+#         "Cardiology",
+#         "Neurology",
+#         "Pediatrics",
+#         "Dermatology",
+#         "General Surgery",
+#         "Family Medicine",
+#         "Orthopedics",
+#         "Gastroenterology"
+#     ]
+
+#     for name in specialties:
+#         sp = Specialty(specialty_name=name)
+#         db.session.add(sp)
+
+#     db.session.commit()
+#     return "Specialties added!"
 
 @app.route('/doctor/dashboard/')
 @doctor_required
