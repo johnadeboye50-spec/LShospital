@@ -1,7 +1,10 @@
 import os
 from flask import Flask, session
+from dotenv import load_dotenv
 from flask_wtf import CSRFProtect
 from flask_migrate import Migrate
+
+load_dotenv()
 
 csrf = CSRFProtect()
 

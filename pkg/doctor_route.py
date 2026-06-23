@@ -6,7 +6,7 @@ from flask import redirect, render_template, request, session,url_for,jsonify,fl
 from werkzeug.security import generate_password_hash,check_password_hash
 from pkg import app
 from pkg.auth_utils import generate_email_token, send_verification_message, send_password_reset_message, send_email 
-from pkg.forms import DoctorForm, DoctorLoginForm, DoctorSettingsForm
+from pkg.forms import DoctorForm, DoctorLoginForm, DoctorSettingsForm,DoctorPasswordResetRequestForm,DoctorPasswordResetForm
 from pkg.models import db,Doctor,Department,Patient,Payment,Consultation,Specialty,Admin,Appointment,DoctorSchedule
 from markupsafe import escape
 
@@ -28,6 +28,15 @@ def send_verification_email(doctor):
 
     verify_link = url_for('verify_doctor_email', token=token, _external=True)
     return send_verification_message(doctor.doctor_email, verify_link, expiry_hours=24)
+
+def send_password_reset_email(doctor):
+    token = generate_email_token()
+    doctor.password_reset_token = token
+    doctor.password_reset_expires_at = datetime.utcnow() + timedelta(hours=1)
+    db.session.commit()
+
+    reset_link = url_for('reset_doctor_password', token=token, _external=True)
+    return send_password_reset_message(doctor.doctor_email, reset_link, expiry_hours=1)
 
 @app.get('/doctors/')
 def doctors_page():
@@ -233,6 +242,55 @@ def resend_doctor_verification():
         flash('Email could not be sent. Please contact support.', category='error')
 
     return redirect(url_for('doctor_login'))
+
+@app.route('/doctor/password-reset/', methods=['GET', 'POST'])
+def doctor_password_reset_request():
+    reset_form = DoctorPasswordResetRequestForm()
+    if request.method == 'GET':
+        return render_template('doctors/doctor_passwordrequest.html', reset_form=reset_form)
+    else:
+        if reset_form.validate_on_submit():
+            email = reset_form.email.data
+            doctor = Doctor.query.filter_by(doctor_email=email).first()
+            if not doctor:
+                flash('No doctor account found with this email.', category='error')
+                return render_template('doctors/doctor_passwordrequest.html', reset_form=reset_form)
+            send_ok = send_password_reset_email(doctor)
+            if send_ok:
+                flash('Password reset email sent! Please check your inbox.', category='success')
+            else:
+                flash('Email could not be sent. Please contact support.', category='warning')
+
+            return redirect(url_for('doctor_login'))
+
+@app.route('/doctor/password-reset/<token>/', methods=['GET', 'POST'])
+def doctor_password_reset(token):
+    if not token:
+        flash('Invalid password reset link.', category='error')
+        return redirect(url_for('doctor_login'))
+    
+    doctor = Doctor.query.filter_by(password_reset_token=token).first()
+    if not doctor:
+        flash('Password reset link is invalid or expired.', category='error')
+        return redirect(url_for('doctor_login'))
+    
+    if doctor.password_reset_expires_at and doctor.password_reset_expires_at < datetime.utcnow():
+        flash('Password reset link has expired. Please request a new password reset.', category='error')
+        return redirect(url_for('doctor_password_reset_request'))
+    
+    reset_form = DoctorPasswordResetForm()
+    if request.method == 'GET':
+        return render_template('doctors/doctor_passwordreset.html', reset_form=reset_form)
+    else:
+        if reset_form.validate_on_submit():
+            new_password = reset_form.new_password.data
+            hashed_password = generate_password_hash(new_password)
+            doctor.doctor_password = hashed_password
+            doctor.password_reset_token = None
+            doctor.password_reset_expires_at = None
+            db.session.commit()
+            flash('Password has been reset successfully! You can now log in.', category='success')
+            return redirect(url_for('doctor_login'))
 
 
 

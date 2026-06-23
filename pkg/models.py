@@ -29,6 +29,8 @@ class Patient(db.Model):
     email_verified_at = db.Column(db.DateTime, nullable=True)
     email_verification_token = db.Column(db.String(255), nullable=True)
     email_verification_expires_at = db.Column(db.DateTime, nullable=True)
+    password_reset_token = db.Column(db.String(255), nullable=True)
+    password_reset_expires_at = db.Column(db.DateTime, nullable=True)
 
     appointments = db.relationship('Appointment', backref='patient',lazy=True)
     payment = db.relationship('Payment', backref='patient',lazy=True)
@@ -55,7 +57,8 @@ class Doctor(db.Model):
     email_verified_at = db.Column(db.DateTime, nullable=True)
     email_verification_token = db.Column(db.String(255), nullable=True)
     email_verification_expires_at = db.Column(db.DateTime, nullable=True)
-
+    password_reset_token = db.Column(db.String(255), nullable=True)
+    password_reset_expires_at = db.Column(db.DateTime, nullable=True)
 
     appointments = db.relationship('Appointment', backref='doctor', lazy=True)
 

@@ -1,0 +1,5 @@
+.env
+instance/temp.db
+__pycache__/
+.venv/
+vmyproject/
