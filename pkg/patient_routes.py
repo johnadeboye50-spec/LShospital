@@ -274,16 +274,12 @@ def request_patient_password_reset():
             send_ok = send_password_reset_email(patient)
             if send_ok:
                 flash('Password reset email sent. Please check your inbox.', category='success')
+                return redirect(url_for('user_login'))
             else:
                 flash('Email could not be sent. Please contact support.', category='warning')
                 return redirect(url_for('user_login'))
-        else:
-            # If validation failed, surface errors to the user so they know why
-            if reset_form.errors:
-                for field, errors in reset_form.errors.items():
-                    for error in errors:
-                        flash(f"{field}: {error}", category='error')
-            return render_template('user/patient_passwordrequest.html', reset_form=reset_form)
+            
+        return render_template('user/patient_passwordrequest.html', reset_form=reset_form)
 
        
 

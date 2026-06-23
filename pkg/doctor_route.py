@@ -258,16 +258,12 @@ def doctor_password_reset_request():
             send_ok = send_password_reset_email(doctor)
             if send_ok:
                 flash('Password reset email sent! Please check your inbox.', category='success')
+                return redirect(url_for('doctor_login'))
             else:
                 flash('Email could not be sent. Please contact support.', category='warning')
                 return redirect(url_for('doctor_login'))
-        else:
-            # If validation failed, surface errors to the user so they know why
-            if reset_form.errors:
-                for field, errors in reset_form.errors.items():
-                    for error in errors:
-                        flash(f"{field}: {error}", category='error')
-            return render_template('doctors/doctor_passwordrequest.html', reset_form=reset_form)
+            
+        return render_template('doctors/doctor_passwordrequest.html', reset_form=reset_form)
 
 @app.route('/doctor/password-reset/<token>/', methods=['GET', 'POST'])
 def doctor_password_reset(token):
