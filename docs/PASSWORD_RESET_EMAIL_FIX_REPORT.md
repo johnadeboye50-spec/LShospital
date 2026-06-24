@@ -154,6 +154,46 @@ Why this fix works:
 - pkg/templates/doctors/doctor_passwordrequest.html
 
 
+## 6) Render production error after requesting reset link
+
+Your Render error:
+- `sqlalchemy.exc.ProgrammingError`
+- `column patient.password_reset_token does not exist`
+
+What this means:
+- Your application code on Render includes the new password reset fields.
+- But the Render PostgreSQL database schema does not yet match that code.
+- So SQLAlchemy tries to select `patient.password_reset_token`, and Postgres fails because that column is missing.
+
+Important:
+- This is not a form/button problem.
+- This is not an email validation problem.
+- This is a production database migration problem.
+
+What already existed:
+
+    migrations/versions/5f24f8acde9f_aded_password_rest_columns_to_doctor_.py
+
+What I added as a defensive fix:
+
+    migrations/versions/8b9e6f1a2c4d_fix_missing_password_reset_columns.py
+
+Why I added it:
+- If Render's migration history is out of sync with the actual database schema, this new migration checks whether each password reset column exists before adding it.
+- That makes deployment more resilient.
+
+Columns ensured by this migration:
+- `patient.password_reset_token`
+- `patient.password_reset_expires_at`
+- `doctor.password_reset_token`
+- `doctor.password_reset_expires_at`
+
+Expected result after deploy:
+- Render runs the migration.
+- Missing reset columns get created.
+- Password reset request should stop crashing with 500.
+
+
 ## What to test now
 
 1. Enter email with spaces before/after and submit reset request.
