@@ -10,6 +10,7 @@ from pkg.forms import LoginForm, RegistrationForm,CompleteProfileForm,PatientSet
 from pkg.models import db,Doctor,Patient,Payment,Consultation,Specialty,Appointment,DoctorSchedule
 from pkg.auth_utils import generate_email_token, send_email, send_verification_message, send_password_reset_message
 from markupsafe import escape
+from sqlalchemy import func
 
 
 def send_verification_email(patient):
@@ -263,23 +264,28 @@ def request_patient_password_reset():
     reset_form = PasswordResetRequestForm()
     if request.method == 'GET':
         return render_template('user/patient_passwordrequest.html', reset_form=reset_form)
-    else:
-        if reset_form.validate_on_submit():
-            email = reset_form.email.data
-            patient = Patient.query.filter_by(patient_email=email).first()
-            if not patient:
-                flash('No patient account found with that email.', category='error')
-                return render_template('user/patient_passwordrequest.html', reset_form=reset_form)
 
-            send_ok = send_password_reset_email(patient)
-            if send_ok:
-                flash('Password reset email sent. Please check your inbox.', category='success')
-                return redirect(url_for('user_login'))
-            else:
-                flash('Email could not be sent. Please contact support.', category='warning')
-                return redirect(url_for('user_login'))
-            
-        return render_template('user/patient_passwordrequest.html', reset_form=reset_form)
+    if reset_form.validate_on_submit():
+        email = (reset_form.email.data or '').strip().lower()
+        patient = Patient.query.filter(
+            func.lower(Patient.patient_email) == email
+        ).first()
+        if not patient:
+            flash('No patient account found with that email.', category='error')
+            return render_template('user/patient_passwordrequest.html', reset_form=reset_form)
+
+        send_ok = send_password_reset_email(patient)
+        if send_ok:
+            flash('Password reset email sent. Please check your inbox.', category='success')
+            return redirect(url_for('user_login'))
+
+        flash('Email could not be sent. Please contact support.', category='warning')
+        return redirect(url_for('user_login'))
+
+    for field, errors in reset_form.errors.items():
+        if errors:
+            flash(errors[0], category='error')
+    return render_template('user/patient_passwordrequest.html', reset_form=reset_form)
 
        
 
@@ -312,6 +318,7 @@ def reset_patient_password(token):
 
             flash('Password reset successful. You can now log in with your new password.', category='success')
             return redirect(url_for('user_login'))
+        return render_template('user/patient_passwordreset.html', reset_form=reset_form)
 
 @app.get('/dashboard/')
 def patient_dashboard():

@@ -9,6 +9,7 @@ from pkg.auth_utils import generate_email_token, send_verification_message, send
 from pkg.forms import DoctorForm, DoctorLoginForm, DoctorSettingsForm,DoctorPasswordResetRequestForm,DoctorPasswordResetForm
 from pkg.models import db,Doctor,Department,Patient,Payment,Consultation,Specialty,Admin,Appointment,DoctorSchedule
 from markupsafe import escape
+from sqlalchemy import func
 
 
 def doctor_required(f):
@@ -35,7 +36,7 @@ def send_password_reset_email(doctor):
     doctor.password_reset_expires_at = datetime.utcnow() + timedelta(hours=1)
     db.session.commit()
 
-    reset_link = url_for('reset_doctor_password', token=token, _external=True)
+    reset_link = url_for('doctor_password_reset', token=token, _external=True)
     return send_password_reset_message(doctor.doctor_email, reset_link, expiry_hours=1)
 
 @app.get('/doctors/')
@@ -248,22 +249,28 @@ def doctor_password_reset_request():
     reset_form = DoctorPasswordResetRequestForm()
     if request.method == 'GET':
         return render_template('doctors/doctor_passwordrequest.html', reset_form=reset_form)
-    else:
-        if reset_form.validate_on_submit():
-            email = reset_form.email.data
-            doctor = Doctor.query.filter_by(doctor_email=email).first()
-            if not doctor:
-                flash('No doctor account found with this email.', category='error')
-                return render_template('doctors/doctor_passwordrequest.html', reset_form=reset_form)
-            send_ok = send_password_reset_email(doctor)
-            if send_ok:
-                flash('Password reset email sent! Please check your inbox.', category='success')
-                return redirect(url_for('doctor_login'))
-            else:
-                flash('Email could not be sent. Please contact support.', category='warning')
-                return redirect(url_for('doctor_login'))
-            
-        return render_template('doctors/doctor_passwordrequest.html', reset_form=reset_form)
+
+    if reset_form.validate_on_submit():
+        email = (reset_form.email.data or '').strip().lower()
+        doctor = Doctor.query.filter(
+            func.lower(Doctor.doctor_email) == email
+        ).first()
+        if not doctor:
+            flash('No doctor account found with this email.', category='error')
+            return render_template('doctors/doctor_passwordrequest.html', reset_form=reset_form)
+
+        send_ok = send_password_reset_email(doctor)
+        if send_ok:
+            flash('Password reset email sent! Please check your inbox.', category='success')
+            return redirect(url_for('doctor_login'))
+
+        flash('Email could not be sent. Please contact support.', category='warning')
+        return redirect(url_for('doctor_login'))
+
+    for field, errors in reset_form.errors.items():
+        if errors:
+            flash(errors[0], category='error')
+    return render_template('doctors/doctor_passwordrequest.html', reset_form=reset_form)
 
 @app.route('/doctor/password-reset/<token>/', methods=['GET', 'POST'])
 def doctor_password_reset(token):
@@ -293,6 +300,7 @@ def doctor_password_reset(token):
             db.session.commit()
             flash('Password has been reset successfully! You can now log in.', category='success')
             return redirect(url_for('doctor_login'))
+        return render_template('doctors/doctor_passwordreset.html', reset_form=reset_form)
 
 
 

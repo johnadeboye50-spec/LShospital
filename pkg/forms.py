@@ -15,7 +15,7 @@ class ProfileForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     first_name = StringField( validators=[DataRequired(), Length(min=3, max=100)])
     last_name = StringField( validators=[DataRequired(), Length(min=3, max=100)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('Email', validators=[DataRequired(), Email(check_deliverability=False)])
     password = PasswordField('Password',validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirm Password',validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
     submit = SubmitField('Register')
@@ -28,7 +28,7 @@ class CompleteProfileForm(FlaskForm):
     submit = SubmitField('Save & Continue')
 
 class LoginForm(FlaskForm):
-    email = StringField('Email',validators=[DataRequired(), Email()])
+    email = StringField('Email',validators=[DataRequired(), Email(check_deliverability=False)])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
@@ -44,7 +44,7 @@ class PatientSettingsForm(FlaskForm):
 class DoctorForm(FlaskForm):
     firstname = StringField("First Name",validators=[DataRequired(), Length(min=2, max=100)])
     lastname = StringField("Last Name",validators=[DataRequired(), Length(min=2, max=100)])
-    email = StringField("Email",validators=[DataRequired(), Email()])
+    email = StringField("Email",validators=[DataRequired(), Email(check_deliverability=False)])
     phone = IntegerField("Phone Number",validators=[DataRequired(), NumberRange(min=10000000, max=99999999999999999999)])
     specialization = SelectField("Specialization",validators=[DataRequired()],choices=[])
     license_no = StringField("Medical License Number",validators=[DataRequired(), Length(min=4, max=50)])
@@ -57,7 +57,7 @@ class DoctorForm(FlaskForm):
     submit = SubmitField("Create Account")
 
 class DoctorLoginForm(FlaskForm):
-    email = StringField('Email',validators=[DataRequired(), Email()])
+    email = StringField('Email',validators=[DataRequired(), Email(check_deliverability=False)])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
@@ -91,7 +91,7 @@ class AdminPasswordChangeForm(FlaskForm):
     submit = SubmitField('Change Password')
 
 class PasswordResetRequestForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('Email', validators=[DataRequired(), Email(check_deliverability=False)])
     submit = SubmitField('Request Password Reset')
 
 class PasswordResetForm(FlaskForm):
@@ -105,5 +105,5 @@ class DoctorPasswordResetForm(FlaskForm):
     submit = SubmitField('Reset Password')
 
 class DoctorPasswordResetRequestForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('Email', validators=[DataRequired(), Email(check_deliverability=False)])
     submit = SubmitField('Request Password Reset')
