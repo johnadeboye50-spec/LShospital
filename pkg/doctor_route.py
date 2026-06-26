@@ -218,7 +218,6 @@ def verify_doctor_email(token):
 
 
 
-
 @app.route('/doctor/resend-verification/', methods=['GET', 'POST'])
 def resend_doctor_verification():
     if request.method == 'GET':

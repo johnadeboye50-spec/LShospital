@@ -195,11 +195,16 @@ def user_register():
 #method 2 for logout
 @app.get('/logout/')
 def user_logout():
-    session.pop('patient_id', None)
+    if session.get('patient_id') is not None:
+        session.clear()
+        flash('You have been logged out successfully.', category='success')
+        return redirect(url_for('user_login'))
+    elif session.get('doctor_id') is not None:
+        session.clear()
+        flash('You have been logged out successfully.', category='success')
+        return redirect(url_for('doctor_login'))
 
-    session.pop('doctor_id', None)
 
-    return redirect(url_for('home'))
 
 
 @app.get('/patient/verify-email/<token>')
