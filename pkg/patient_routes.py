@@ -271,7 +271,7 @@ def request_patient_password_reset():
             func.lower(Patient.patient_email) == email
         ).first()
         if not patient:
-            flash('No patient account found with that email.', category='error')
+            flash('No patient account found with this email.', category='error')
             return render_template('user/patient_passwordrequest.html', reset_form=reset_form)
 
         send_ok = send_password_reset_email(patient)
