@@ -130,6 +130,11 @@ def user_login():
 @app.route('/register/', methods=['POST', 'GET'])
 def user_register():
     regform = RegistrationForm()
+    if session.get('doctor_id') != None:
+        return redirect(url_for('doctor_dashboard'))
+    if session.get('patient_id') != None:
+        return redirect(url_for('patient_dashboard'))
+    
     if request.method == 'GET':
         return render_template('user/register.html', regform=regform)
     else:
@@ -193,7 +198,7 @@ def user_register():
 #     return redirect(url_for('home'))
 
 #method 2 for logout
-@app.get('/logout/')
+@app.route('/logout/')
 def user_logout():
     if session.get('patient_id') is not None:
         session.clear()

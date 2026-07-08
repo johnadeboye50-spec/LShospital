@@ -112,6 +112,10 @@ def doctor_register():
     form = DoctorForm()
     specialties = Specialty.query.all()
     form.specialization.choices = [(str(s.specialty_id), s.specialty_name) for s in specialties]
+    if session.get('doctor_id') != None:
+        return redirect(url_for('doctor_dashboard'))
+    if session.get('patient_id') != None:
+        return redirect(url_for('patient_dashboard'))
 
     if request.method == 'GET':
         return render_template('doctors/doctor_register.html', form=form)
