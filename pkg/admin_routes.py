@@ -25,6 +25,10 @@ def admin_login():
     # If already logged in, go to dashboard
     if session.get('adminonline'):
         return redirect(url_for('admin_dashboard'))
+    if session.get('doctor_id'):
+        return redirect(url_for('doctor_dashboard'))
+    if session.get('patient_id'):
+        return redirect(url_for('patient_dashboard'))
 
     if request.method == 'GET':
         return render_template('admin/admin_login.html', logform=logform)
