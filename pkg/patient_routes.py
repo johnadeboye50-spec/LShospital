@@ -198,7 +198,7 @@ def user_register():
 #     return redirect(url_for('home'))
 
 #method 2 for logout
-@app.route('/logout/')
+@app.post('/logout/')
 def user_logout():
     if session.get('patient_id') is not None:
         session.clear()
@@ -207,9 +207,7 @@ def user_logout():
     elif session.get('doctor_id') is not None:
         session.clear()
         flash('You have been logged out successfully.', category='success')
-        return redirect(url_for('doctor_login'))
-    else:
-        return redirect(url_for('home'))
+        return redirect(url_for('doctor_login'))    
 
 
 
