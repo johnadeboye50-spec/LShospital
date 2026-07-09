@@ -208,6 +208,8 @@ def user_logout():
         session.clear()
         flash('You have been logged out successfully.', category='success')
         return redirect(url_for('doctor_login'))
+    else:
+        return redirect(url_for('home'))
 
 
 

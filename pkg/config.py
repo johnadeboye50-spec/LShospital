@@ -1,7 +1,7 @@
 import os
 
 class GeneralConfig:
-    ADMIN_EMAIL="johnadeboye50@gmail.com"
+    ADMIN_EMAIL=os.environ.get("ADMIN_EMAIL")
     SQLALCHEMY_TRACK_MODIFICATIONS=False
 
 class TestingConfig(GeneralConfig):

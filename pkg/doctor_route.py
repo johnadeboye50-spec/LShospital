@@ -80,6 +80,8 @@ def doctor_login():
     docform = DoctorLoginForm()
     if session.get('doctor_id') != None:
         return redirect(url_for('doctor_dashboard'))
+    if session.get('patient_id') != None:
+        return redirect(url_for('patient_dashboard'))
     if request.method == 'GET':
         return render_template('doctors/doctor_login.html', docform=docform)
     else:
