@@ -333,7 +333,6 @@ def reset_patient_password(token):
 @app.get('/dashboard/')
 def patient_dashboard():
     if session.get('patient_id') != None:
-        deets = Patient.query.get(session['patient_id'])
         # Appointments ordered by most recent update
         appointments = Appointment.query.filter_by(patient_id=session['patient_id']).order_by(Appointment.updated_at.desc()).all()
 
@@ -427,8 +426,7 @@ def patient_dashboard():
         bills = sorted(bills, key=lambda x: x['paid_at'] if x['paid_at'] else datetime.min, reverse=True)[:3]
 
         return render_template(
-            '/user/patient_dashboard.html',
-            deets=deets,
+            '/user/patient_dashboard.html', 
             appointments=appointments,
             activities=activities,
             medications=medications,

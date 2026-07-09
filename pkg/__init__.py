@@ -1,5 +1,5 @@
 import os
-from flask import Flask, session
+from flask import Flask, session, render_template, redirect, url_for
 from dotenv import load_dotenv
 from flask_wtf import CSRFProtect
 from flask_migrate import Migrate
@@ -31,6 +31,8 @@ def create_app():
     csrf.init_app(app)
     db.init_app(app)
     Migrate(app, db)
+    
+
 
     #(GLOBAL DEETS + DOCTOR)
     @app.context_processor
@@ -46,6 +48,38 @@ def create_app():
 
         return dict(deets=patient, doctor=doctor)
     
+    @app.errorhandler(404)
+    def page_not_found(e):
+        if session.get('patient_id') != None:
+            return redirect(url_for('patient_dashboard'))
+        elif session.get('doctor_id') != None:
+            return redirect(url_for('doctor_dashboard'))
+        elif session.get('admin_id') != None:
+            return redirect(url_for('admin_dashboard'))
+        else:
+            return redirect(url_for('home'))
+        
+    @app.errorhandler(500)
+    def internal_server_error(e):
+        if session.get('patient_id') != None:
+            return redirect(url_for('patient_dashboard'))
+        elif session.get('doctor_id') != None:
+            return redirect(url_for('doctor_dashboard'))
+        elif session.get('admin_id') != None:
+            return redirect(url_for('admin_dashboard'))
+        else:
+            return redirect(url_for('home'))
+        
+    @app.errorhandler(403)
+    def forbidden(e):
+        if session.get('patient_id') != None:
+            return redirect(url_for('patient_dashboard'))
+        elif session.get('doctor_id') != None:
+            return redirect(url_for('doctor_dashboard'))
+        elif session.get('admin_id') != None:
+            return redirect(url_for('admin_dashboard'))
+        else:
+            return redirect(url_for('home'))
     
     return app
 
