@@ -152,24 +152,26 @@ def admin_dashboard():
                          latest_appointments=latest_appointments,
                          current_date=current_date)
 
-@app.route('/admin/logout/')
+@app.post('/admin/logout/')
 @admin_login_required
 def admin_logout():
-    session.pop('adminonline', None)
-    flash('You have been logged out.', 'success')
+    if session.get('adminonline') is not None:
+        session.clear()
+        flash('You have been logged out successfully.', category='success')
+        return redirect(url_for('admin_login'))
     return redirect(url_for('admin_login'))
 
-@app.route('/admin/setup/')
-def admin_setup():
-    # Create the admin account
-    admin = Admin(
-        admin_username='admin',
-        admin_password=generate_password_hash('lsadmin1')
-    )
-    db.session.add(admin)
-    db.session.commit()
+# @app.post('/admin/setup/')
+# def admin_setup():
+#     # Create the admin account
+#     admin = Admin(
+#         admin_username='admin',
+#         admin_password=generate_password_hash('lsadmin1')
+#     )
+#     db.session.add(admin)
+#     db.session.commit()
     
-    return "Admin account created successfully! Username: admin, Password: lsadmin1. You can now <a href='/admin/login/'>login</a>."
+#     return "Admin account created successfully! Username: admin, Password: lsadmin1. You can now <a href='/admin/login/'>login</a>."
 
 # Department Routes
 @app.route('/admin/departments/', methods=['GET', 'POST'])

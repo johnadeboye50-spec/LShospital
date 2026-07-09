@@ -207,8 +207,10 @@ def user_logout():
     elif session.get('doctor_id') is not None:
         session.clear()
         flash('You have been logged out successfully.', category='success')
-        return redirect(url_for('doctor_login'))    
-
+        return redirect(url_for('doctor_login'))
+    else:
+        return redirect(url_for('home'))
+    
 
 
 

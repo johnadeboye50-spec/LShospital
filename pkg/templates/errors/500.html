@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Life Spring Hospital - Server Error">
+    <link rel="icon" href="/static/favicon_io (2).ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon_io (2)/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon_io (2)/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon_io (2)/favicon-16x16.png">
+    <title>Life Spring Hospital - Server Error</title>
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --brand-blue: #0d6efd;
+            --brand-cyan: #0aa2c0;
+            --ink: #243447;
+            --muted: #5f6f82;
+            --paper: #f6f9ff;
+        }
+
+        body {
+            min-height: 100dvh;
+            background:
+                radial-gradient(circle at 8% 10%, rgba(13, 110, 253, 0.12), transparent 35%),
+                radial-gradient(circle at 92% 25%, rgba(10, 162, 192, 0.12), transparent 34%),
+                linear-gradient(160deg, #f8fbff 0%, #ebf3ff 100%);
+            margin: 0;
+            color: var(--ink);
+        }
+
+        .site-shell {
+            display: flex;
+            min-height: 100dvh;
+            flex-direction: column;
+        }
+
+        .error-main {
+            flex: 1;
+            padding: 2.75rem 0 2rem;
+        }
+
+        .error-card {
+            border: none;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 18px 55px rgba(13, 38, 76, 0.16);
+        }
+
+        .error-banner {
+            background: linear-gradient(125deg, var(--brand-blue), var(--brand-cyan));
+            color: white;
+            padding: 1.2rem 1.3rem;
+        }
+
+        .brand-logo {
+            width: 46px;
+            height: 46px;
+            object-fit: cover;
+        }
+
+        .nav-brand-logo {
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
+        }
+
+        .code-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            border-radius: 999px;
+            background: rgba(13, 110, 253, 0.1);
+            color: var(--brand-blue);
+            padding: .45rem .9rem;
+            font-weight: 700;
+            letter-spacing: .3px;
+            font-size: .88rem;
+        }
+
+        .error-title {
+            font-size: clamp(2rem, 5.5vw, 3.2rem);
+            font-weight: 700;
+            line-height: 1.08;
+            margin: 1rem 0 .8rem;
+            letter-spacing: -.5px;
+        }
+
+        .error-text {
+            color: var(--muted);
+            max-width: 610px;
+            margin: 0 auto 1.3rem;
+            font-size: 1.02rem;
+        }
+
+        .actions .btn {
+            min-width: 165px;
+        }
+
+        .status-note {
+            font-size: .93rem;
+            color: #6b7786;
+        }
+
+        .mini-panel {
+            background: var(--paper);
+            border: 1px solid rgba(13, 110, 253, .1);
+            border-radius: 14px;
+        }
+
+        .mini-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(13, 110, 253, .12);
+            color: var(--brand-blue);
+        }
+
+        .footer-clean {
+            background: #111827;
+        }
+
+        @media (max-width: 767px) {
+            .error-main {
+                padding-top: 1.65rem;
+            }
+
+            .actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="site-shell">
+        <header class="sticky-top">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+                <div class="container">
+                    <a class="navbar-brand d-flex align-items-center" href="{{ url_for('home') }}">
+                        <img src="/static/images/logo2.webp" alt="Life Spring Logo"
+                            class="rounded-circle me-2 nav-brand-logo">
+                        <span class="fw-bold fs-4">Life <span class="text-primary">Spring</span></span>
+                    </a>
+
+                    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#errorNav" aria-controls="errorNav" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="errorNav">
+                        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link px-3" href="{{ url_for('home') }}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link px-3" href="{{ url_for('about') }}">About</a></li>
+                            <li class="nav-item"><a class="nav-link px-3" href="{{ url_for('services') }}">Services</a>
+                            </li>
+                            <li class="nav-item"><a class="nav-link px-3" href="{{ url_for('contact') }}">Contact</a>
+                            </li>
+                        </ul>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-outline-primary" href="{{ url_for('login_page') }}">
+                                <i class="fas fa-sign-in-alt me-1"></i> Login
+                            </a>
+                            <a class="btn btn-primary" href="{{ url_for('book_appointment') }}">
+                                <i class="fas fa-calendar-plus me-1"></i> Book Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="error-main">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-9">
+                        <div class="card error-card">
+                            <div class="error-banner d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                                <div class="d-flex align-items-center gap-2">
+                                    <img src="/static/images/logo2.webp" alt="Life Spring Hospital"
+                                        class="rounded-circle brand-logo">
+                                    <div>
+                                        <div class="fw-bold lh-1">Life Spring Hospital</div>
+                                        <small class="opacity-75">Patient Care Portal</small>
+                                    </div>
+                                </div>
+                                <span class="badge text-bg-light text-primary">Internal Server Error</span>
+                            </div>
+
+                            <div class="card-body p-4 p-md-5 text-center">
+                                <span class="code-chip">
+                                    <i class="fas fa-triangle-exclamation"></i>
+                                    Error 500
+                                </span>
+
+                                <h1 class="error-title">Our system hit a temporary issue</h1>
+                                <p class="error-text">
+                                    We could not complete your request because something unexpected happened on the
+                                    server.
+                                    Your data is safe. Please retry in a few moments.
+                                </p>
+
+                                <div class="actions d-flex justify-content-center gap-2 flex-wrap mb-3">
+                                    <button type="button" class="btn btn-primary" onclick="window.location.reload();">
+                                        <i class="fas fa-rotate-right me-1"></i> Try Again
+                                    </button>
+                                    <a href="{{ url_for('home') }}" class="btn btn-outline-primary">
+                                        <i class="fas fa-house me-1"></i> Back To Home
+                                    </a>
+                                    <a href="{{ url_for('contact') }}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-headset me-1"></i> Contact Support
+                                    </a>
+                                </div>
+
+                                <div class="mini-panel p-3 mt-3 text-start">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <span class="mini-icon"><i class="fas fa-circle-info"></i></span>
+                                        <div>
+                                            <h2 class="h6 mb-1">What to do next</h2>
+                                            <p class="mb-0 status-note">
+                                                If this continues after retrying, contact support and include what
+                                                action you were performing.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer-clean text-white py-4">
+            <div class="container">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-7 text-center text-md-start">
+                        <p class="mb-1 fw-semibold">Life Spring Hospital</p>
+                        <p class="mb-0 text-white-50 small">Compassionate care, trusted specialists, better outcomes.
+                        </p>
+                    </div>
+                    <div class="col-md-5 text-center text-md-end">
+                        <a href="tel:09131296610" class="text-white-50 text-decoration-none me-3">09131296610</a>
+                        <a href="mailto:johnadeboye50@gmail.com"
+                            class="text-white-50 text-decoration-none">johnadeboye50@gmail.com</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

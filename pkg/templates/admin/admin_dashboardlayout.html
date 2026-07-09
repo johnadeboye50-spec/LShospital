@@ -30,10 +30,18 @@
             </button>
             <div class="collapse navbar-collapse" id="topnav">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i
-                                class="fas fa-gauge"></i> Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_logout') }}"><i
-                                class="fas fa-right-from-bracket"></i> Logout</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-gauge"></i>
+                            Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <form method="post" action="{{ url_for('admin_logout') }}" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="nav-link btn btn-link">
+                                <i class="fas fa-right-from-bracket"></i> Logout
+                            </button>
+                        </form>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -91,9 +99,12 @@
                 <i class="fas fa-gear me-2 text-primary"></i> Settings
             </a>
             <div class="mt-auto p-3">
-                <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-danger w-100">
-                    <i class="fas fa-right-from-bracket me-2"></i> Logout
-                </a>
+                <form method="post" action="{{ url_for('admin_logout') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-outline-danger w-100">
+                        <i class="fas fa-right-from-bracket me-2"></i> Logout
+                    </button>
+                </form>
             </div>
         </div>
     </aside>
@@ -138,9 +149,12 @@
                 </a>
 
                 <div class="p-3 mt-auto">
-                    <a href="{{ url_for('admin_logout') }}" class="btn btn-danger w-100">
-                        <i class="fas fa-right-from-bracket me-2"></i> Logout
-                    </a>
+                    <form method="post" action="{{ url_for('admin_logout') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="fas fa-right-from-bracket me-2"></i> Logout
+                        </button>
+                    </form>
                 </div>
             </ul>
         </div>

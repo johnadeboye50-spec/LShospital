@@ -54,21 +54,15 @@ def create_app():
             return redirect(url_for('patient_dashboard'))
         elif session.get('doctor_id') != None:
             return redirect(url_for('doctor_dashboard'))
-        elif session.get('admin_id') != None:
+        elif session.get('adminonline') != None:
             return redirect(url_for('admin_dashboard'))
         else:
             return redirect(url_for('home'))
         
     @app.errorhandler(500)
     def internal_server_error(e):
-        if session.get('patient_id') != None:
-            return redirect(url_for('patient_dashboard'))
-        elif session.get('doctor_id') != None:
-            return redirect(url_for('doctor_dashboard'))
-        elif session.get('admin_id') != None:
-            return redirect(url_for('admin_dashboard'))
-        else:
-            return redirect(url_for('home'))
+        db.session.rollback()
+        return render_template('errors/500.html'), 500
         
     @app.errorhandler(403)
     def forbidden(e):
@@ -76,7 +70,7 @@ def create_app():
             return redirect(url_for('patient_dashboard'))
         elif session.get('doctor_id') != None:
             return redirect(url_for('doctor_dashboard'))
-        elif session.get('admin_id') != None:
+        elif session.get('adminonline') != None:
             return redirect(url_for('admin_dashboard'))
         else:
             return redirect(url_for('home'))
