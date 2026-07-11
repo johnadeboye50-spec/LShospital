@@ -10,7 +10,7 @@ csrf = CSRFProtect()
 
 def create_app():
     from pkg import config
-    from pkg.models import db, Patient, Doctor   # <-- added Patient & Doctor import
+    from pkg.models import db, Patient, Doctor, Admin  # <-- added Patient, Doctor & Admin import
 
     app = Flask(__name__, instance_relative_config=True)
     
@@ -39,6 +39,7 @@ def create_app():
     def inject_user():
         patient = None
         doctor = None
+        admin = None
 
         if session.get("patient_id"):
             patient = Patient.query.get(session["patient_id"])
@@ -46,7 +47,10 @@ def create_app():
         if session.get("doctor_id"):
             doctor = Doctor.query.get(session["doctor_id"])
 
-        return dict(deets=patient, doctor=doctor)
+        if session.get("adminonline"):
+            admin = Admin.query.get(session["adminonline"])
+
+        return dict(deets=patient, doctor=doctor, admin=admin)
     
     @app.errorhandler(404)
     def page_not_found(e):

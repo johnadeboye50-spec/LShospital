@@ -82,6 +82,9 @@ def doctor_login():
         return redirect(url_for('doctor_dashboard'))
     if session.get('patient_id') != None:
         return redirect(url_for('patient_dashboard'))
+    if session.get('adminonline') != None:
+        return redirect(url_for('admin_dashboard'))
+    
     if request.method == 'GET':
         return render_template('doctors/doctor_login.html', docform=docform)
     else:
@@ -118,7 +121,9 @@ def doctor_register():
         return redirect(url_for('doctor_dashboard'))
     if session.get('patient_id') != None:
         return redirect(url_for('patient_dashboard'))
-
+    if session.get('adminonline') != None:
+        return redirect(url_for('admin_dashboard'))
+    
     if request.method == 'GET':
         return render_template('doctors/doctor_register.html', form=form)
     else:

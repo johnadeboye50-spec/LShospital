@@ -64,13 +64,7 @@ def profile_required(f):
 
 @app.get('/')
 def home():
-    patient = None
-    doctor = None
-    if session.get('patient_id'):
-        patient = Patient.query.get(session['patient_id'])
-    if session.get('doctor_id'):
-        doctor = Doctor.query.get(session['doctor_id'])
-    return render_template('user/home.html', deets=patient, doctor=doctor)
+    return render_template('user/home.html')
 
 @app.get('/about/')
 def about():
@@ -90,6 +84,8 @@ def login_page():
         return redirect(url_for('patient_dashboard'))
     if session.get('doctor_id') != None:
         return redirect(url_for('doctor_dashboard'))
+    if session.get('adminonline') != None:
+        return redirect(url_for('admin_dashboard'))
     
     return render_template('user/login.html')
 
@@ -101,6 +97,10 @@ def user_login():
     
     if session.get('patient_id') != None:
         return redirect(url_for('patient_dashboard'))
+    
+    if session.get('adminonline') != None:
+        return redirect(url_for('admin_dashboard'))
+    
     if request.method == 'GET':
         return render_template('user/patient_login.html', logform=logform)
     else:
@@ -134,6 +134,8 @@ def user_register():
         return redirect(url_for('doctor_dashboard'))
     if session.get('patient_id') != None:
         return redirect(url_for('patient_dashboard'))
+    if session.get('adminonline') != None:
+        return redirect(url_for('admin_dashboard'))
     
     if request.method == 'GET':
         return render_template('user/register.html', regform=regform)
