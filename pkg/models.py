@@ -97,7 +97,7 @@ class Appointment(db.Model):
     app_id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.patient_id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.doctor_id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
-    patient_note = db.Column(db.String(255), nullable=True) 
+    patient_note = db.Column(db.String(255), nullable=True)
     doctor_note = db.Column(db.Text, nullable=True)
     status = db.Column(db.Enum('pending', 'accepted', 'declined', 'cancelled', 'completed', name='appointment_status_enum'), default='pending')
     appointment_date = db.Column(db.Date, nullable=False)

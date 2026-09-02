@@ -35,7 +35,8 @@ def send_password_reset_email(patient):
 
 @app.after_request
 def after_request(response):
-    response.headers["Cache-Control"]="no-casche, no-store,must-revalate"
+    """Prevent browsers from caching sensitive patient pages."""
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return response
 
 def login_required(f):
